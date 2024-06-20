@@ -1,0 +1,11 @@
+{
+	"name": "instagram-scraper",
+	"version": "1.0.0",
+	"description": "Scrapes an Instagram profile for stats.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Jadon Hansen",
+	"license": "ISC"
+}
