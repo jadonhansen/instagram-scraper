@@ -10,7 +10,10 @@ export function getDataFromFile(filePath: string): Promise<string[] | Error> {
 		fs.createReadStream(filePath, "utf8")
 			.on("error", function (error) {
 				console.error(`\nError reading from file path: ${filePath}.\nError: ${error.message}\n`);
-				reject({ status: 500, message: "There was a problem fetching your data!" });
+				reject({
+					status: 500,
+					message: "There was a problem fetching your data!",
+				});
 			})
 			.on("data", (chunk) => {
 				arr.push(chunk.toString());

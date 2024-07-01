@@ -20,7 +20,7 @@ export async function findFans(): Promise<string[] | Error> {
 
 	if (!Array.isArray(followers)) return followers;
 	if (!Array.isArray(postLikes)) return postLikes;
-	`q`
+
 	// do calculations
 	return [""];
 }
