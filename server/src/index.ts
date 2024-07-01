@@ -12,28 +12,28 @@ app.get("/ghost_followers", async (req, res) => {
 	const result = await findGhostFollowers();
 
 	if (Array.isArray(result)) res.send(result);
-	else res.status(result.number).send(result.message);
+	else res.status(result.status).send(result.message);
 });
 
 app.get("/fans", async (req, res) => {
 	const result = await findFans();
 
 	if (Array.isArray(result)) res.send(result);
-	else res.status(result.number).send(result.message);
+	else res.status(result.status).send(result.message);
 });
 
 app.get("/unfollowers", async (req, res) => {
 	const result = await findUnfollowers();
 
 	if (Array.isArray(result)) res.send(result);
-	else res.status(result.number).send(result.message);
+	else res.status(result.status).send(result.message);
 });
 
 app.get("/ordered_followers", async (req, res) => {
 	const result = await orderedFollowers();
 
 	if (Array.isArray(result)) res.send(result);
-	else res.status(result.number).send(result.message);
+	else res.status(result.status).send(result.message);
 });
 
 app.listen(port, () => {
