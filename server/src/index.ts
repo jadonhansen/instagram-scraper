@@ -1,5 +1,5 @@
 import express from "express";
-import { findGhostFollowers, findFans, findUnfollowers, orderedFollowers } from "./methods.ts";
+import { findGhostFollowers, findFans, findUnfollowers, orderedFollowers } from "./methods";
 
 const app = express();
 const port = 3000;

@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Error } from "./interfaces.ts";
+import { Error } from "./interfaces";
 
 const isDebug = true;
 
