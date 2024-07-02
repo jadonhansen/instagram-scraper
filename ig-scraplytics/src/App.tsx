@@ -1,23 +1,22 @@
-import { useEffect, useState } from "react";
-import { testServer } from "./api/instagramServer";
+import OverviewPanel from "./components/OverviewPanel.tsx";
+import FansPanel from "./components/FansPanel.tsx";
+import GhostsPanel from "./components/GhostsPanel.tsx";
+import UnfollowersPanel from "./components/UnfollowersPanel.tsx";
+
+import "./styles/panels.css";
 
 function App() {
-	const [serverTest, setServerTest] = useState<string | Error>("");
-
-	useEffect(() => {
-		callServer();
-	});
-
-	const callServer = async () => {
-		const res = await testServer();
-		setServerTest(res);
-	};
-
 	return (
-		<>
-			<p>IG Scraplytics</p>
-			{serverTest === "" ? <p>Loading...</p> : <p>{serverTest.toString()}</p>}
-		</>
+		<div className="app-container">
+			<h2>IG Scraplytics</h2>
+			<OverviewPanel></OverviewPanel>
+
+			<div className="grid">
+				<GhostsPanel></GhostsPanel>
+				<UnfollowersPanel></UnfollowersPanel>
+				<FansPanel></FansPanel>
+			</div>
+		</div>
 	);
 }
 
