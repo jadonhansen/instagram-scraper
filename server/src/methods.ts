@@ -1,5 +1,5 @@
-import { Error } from "./interfaces";
-import { getDataFromFile } from "./queries";
+import { Error } from "./interfaces.ts";
+import { getDataFromFile } from "./queries.ts";
 
 // find followers who do not like any of your posts
 export async function findGhostFollowers(): Promise<string[] | Error> {
