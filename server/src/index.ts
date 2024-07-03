@@ -1,5 +1,5 @@
 import express from "express";
-import { findGhostFollowers, findFans, findUnfollowers, orderedFollowers } from "./methods";
+import { findGhostFollowers, findFollowing, findFans, findUnfollowers, orderedFollowers } from "./methods";
 
 const app = express();
 const port = 3000;
@@ -31,6 +31,13 @@ app.get("/unfollowers", async (req, res) => {
 
 app.get("/ordered_followers", async (req, res) => {
 	const result = await orderedFollowers();
+
+	if (Array.isArray(result)) res.send(result);
+	else res.status(result.status).send(result.message);
+});
+
+app.get("/following", async (req, res) => {
+	const result = await findFollowing();
 
 	if (Array.isArray(result)) res.send(result);
 	else res.status(result.status).send(result.message);

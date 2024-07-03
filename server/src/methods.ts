@@ -52,3 +52,12 @@ export async function orderedFollowers(): Promise<string[] | Error> {
 	// do calculations
 	return [""];
 }
+
+// just returns a list of users you follow
+export async function findFollowing(): Promise<string[] | Error> {
+	const followers = await getDataFromFile(followingTxt);
+
+	if (!Array.isArray(followers)) return followers;
+
+	return [""];
+}
