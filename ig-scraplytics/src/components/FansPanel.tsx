@@ -12,10 +12,10 @@ const FansPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const res = await getFans();
+		const { data, error } = await getFans();
 
-		if (Array.isArray(res)) setDataList(res);
-		else setServerError(res);
+		if (error) setServerError(error);
+		else setDataList(data);
 	};
 
 	const listOfUsers = (list: string[]): ReactNode => {

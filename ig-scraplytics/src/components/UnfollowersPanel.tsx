@@ -12,10 +12,10 @@ const UnfollowersPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const res = await getUnfollowers();
+		const { data, error } = await getUnfollowers();
 
-		if (Array.isArray(res)) setDataList(res);
-		else setServerError(res);
+		if (error) setServerError(error);
+		else setDataList(data);
 	};
 
 	const listOfUsers = (list: string[]): ReactNode => {

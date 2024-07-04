@@ -12,10 +12,10 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const res = await getGhostFollowers();
+		const { data, error } = await getGhostFollowers();
 
-		if (Array.isArray(res)) setDataList(res);
-		else setServerError(res);
+		if (error) setServerError(error);
+		else setDataList(data);
 	};
 
 	const listOfUsers = (list: string[]): ReactNode => {
