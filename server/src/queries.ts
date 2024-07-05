@@ -1,13 +1,23 @@
 import fs from "fs";
-import { Error } from "./interfaces";
+import { Error, QueryResponse } from "./types";
 
 const isDebug = true;
 
-export function getDataFromFile(filePath: string): Promise<string[] | Error> {
+export function getDataFromFile(filePath: string): Promise<QueryResponse<string[]>> {
+	return queryTextFile(filePath)
+		.then((data) => {
+			return { data, error: undefined };
+		})
+		.catch((error: Error) => {
+			return { data: undefined, error };
+		});
+}
+
+export function queryTextFile(filePath: string): Promise<string[]> {
 	const arr: string[] = [];
 
 	return new Promise((resolve, reject) => {
-		fs.createReadStream(filePath, "utf8")
+		fs.createReadStream(filePath, { encoding: "utf-8" })
 			.on("error", function (error) {
 				console.error(`\nError reading from file path: ${filePath}.\nError: ${error.message}\n`);
 				reject({
@@ -16,8 +26,10 @@ export function getDataFromFile(filePath: string): Promise<string[] | Error> {
 				});
 			})
 			.on("data", (chunk) => {
-				arr.push(chunk.toString());
-				if (isDebug) console.log(chunk);
+				if (chunk) {
+					arr.push(chunk.toString());
+					if (isDebug) console.log(chunk);
+				}
 			})
 			.on("end", () => {
 				if (isDebug) console.log(`\nCompleted reading from file path: ${filePath}\n`);

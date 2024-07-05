@@ -7,6 +7,7 @@ const headers = new Headers({ "content-type": "application/json" });
 const fetchOptions: RequestInit = {
 	method: "GET",
 	headers: headers,
+	mode: "no-cors",
 };
 
 export async function getGhostFollowers(): Promise<ApiResponse<string[], Error>> {
