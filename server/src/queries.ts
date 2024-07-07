@@ -23,7 +23,7 @@ export function queryTextFile(filePath: string): Promise<QueryResponse<string>> 
 				});
 			})
 			.on("data", (chunk) => {
-				if (chunk) contents = chunk.toString();
+				if (chunk) contents += chunk.toString();
 			})
 			.on("end", () => {
 				if (isDebug) console.log(`\nCompleted reading from file path: ${filePath}`);
