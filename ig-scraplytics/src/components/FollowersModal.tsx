@@ -1,9 +1,9 @@
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
-import { getGhostFollowers } from "../api/instagramServer";
+import { getOrderedFollowers } from "../api/instagramServer";
 
 interface Props {}
 
-const GhostsPanel: FunctionComponent<Props> = () => {
+const FollowersModal: FunctionComponent<Props> = () => {
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 
@@ -12,7 +12,7 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const { data, error } = await getGhostFollowers();
+		const { data, error } = await getOrderedFollowers();
 
 		if (error) setServerError(error);
 		else setDataList(data);
@@ -29,11 +29,11 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 
 	return (
 		<div className="panel">
-			<h4>Ghost Followers</h4>
-			<p>Users who follow you but do not engage with your content.</p>
+			<h4>Ordered Followers</h4>
+			<p>Followers are ordered from the most to the least interactive (out of the scraped posts).</p>
 
 			{dataList !== undefined ? (
-				<div className="ghosts-list">{listOfUsers(dataList)}</div>
+				<div className="ordered-followers-list">{listOfUsers(dataList)}</div>
 			) : serverError !== undefined ? (
 				<p>Error {JSON.stringify(serverError)}</p>
 			) : (
@@ -43,4 +43,4 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	);
 };
 
-export default GhostsPanel;
+export default FollowersModal;

@@ -21,3 +21,8 @@ export type QueryError<QueryErrorData = undefined> = [QueryErrorData] extends [u
 export type QueryResponse<QuerySuccessData, QueryErrorData = undefined> =
 	| QuerySuccess<QuerySuccessData>
 	| QueryError<QueryErrorData>;
+
+export interface UserPostRelationship {
+	user: string;
+	numberOfPostsLiked: number;
+}
