@@ -1,6 +1,5 @@
 import express from "express";
 import { findGhostFollowers, findFollowing, findFans, findUnfollowers, orderedFollowers } from "./methods";
-import { Error } from "./types";
 
 const app = express();
 const port = 3000;
@@ -10,38 +9,38 @@ app.get("/", (req, res) => {
 });
 
 app.get("/ghost_followers", async (req, res) => {
-	const result: string[] | Error = await findGhostFollowers();
+	const { data, error } = await findGhostFollowers();
 
-	if (Array.isArray(result)) res.send(result);
-	else res.status(result.status).send(result.message);
+	if (error) res.status(error.status).send(error.message);
+	else res.send(data);
 });
 
 app.get("/fans", async (req, res) => {
-	const result: string[] | Error = await findFans();
+	const { data, error } = await findFans();
 
-	if (Array.isArray(result)) res.send(result);
-	else res.status(result.status).send(result.message);
+	if (error) res.status(error.status).send(error.message);
+	else res.send(data);
 });
 
 app.get("/unfollowers", async (req, res) => {
-	const result: string[] | Error = await findUnfollowers();
+	const { data, error } = await findUnfollowers();
 
-	if (Array.isArray(result)) res.send(result);
-	else res.status(result.status).send(result.message);
+	if (error) res.status(error.status).send(error.message);
+	else res.send(data);
 });
 
 app.get("/ordered_followers", async (req, res) => {
-	const result: string[] | Error = await orderedFollowers();
+	const { data, error } = await orderedFollowers();
 
-	if (Array.isArray(result)) res.send(result);
-	else res.status(result.status).send(result.message);
+	if (error) res.status(error.status).send(error.message);
+	else res.send(data);
 });
 
 app.get("/following", async (req, res) => {
-	const result: string[] | Error = await findFollowing();
+	const { data, error } = await findFollowing();
 
-	if (Array.isArray(result)) res.send(result);
-	else res.status(result.status).send(result.message);
+	if (error) res.status(error.status).send(error.message);
+	else res.send(data);
 });
 
 app.listen(port, () => {

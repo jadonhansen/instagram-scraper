@@ -1,39 +1,35 @@
 import fs from "fs";
-import { Error, QueryResponse } from "./types";
+import { fileURLToPath } from "url";
+import path from "path";
+import { QueryResponse } from "./types";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const isDebug = true;
 
-export function getDataFromFile(filePath: string): Promise<QueryResponse<string[]>> {
-	return queryTextFile(filePath)
-		.then((data) => {
-			return { data, error: undefined };
-		})
-		.catch((error: Error) => {
-			return { data: undefined, error };
-		});
-}
-
-export function queryTextFile(filePath: string): Promise<string[]> {
+export function queryTextFile(filePath: string): Promise<QueryResponse<string[]>> {
 	const arr: string[] = [];
 
-	return new Promise((resolve, reject) => {
-		fs.createReadStream(filePath, { encoding: "utf-8" })
+	const prom: Promise<QueryResponse<string[]>> = new Promise((resolve, reject) => {
+		fs.createReadStream(path.join(__dirname, filePath), { encoding: "utf-8" })
 			.on("error", function (error) {
 				console.error(`\nError reading from file path: ${filePath}.\nError: ${error.message}\n`);
 				reject({
-					status: 500,
-					message: "There was a problem fetching your data!",
+					data: undefined,
+					error: {
+						status: 500,
+						message: "There was a problem fetching your data!",
+					},
 				});
 			})
 			.on("data", (chunk) => {
-				if (chunk) {
-					arr.push(chunk.toString());
-					if (isDebug) console.log(chunk);
-				}
+				if (chunk) arr.push(chunk.toString());
 			})
 			.on("end", () => {
 				if (isDebug) console.log(`\nCompleted reading from file path: ${filePath}\n`);
-				resolve(arr);
+				resolve({ data: arr, error: undefined });
 			});
 	});
+
+	return prom;
 }
