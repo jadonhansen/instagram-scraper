@@ -8,28 +8,52 @@
 	width: 100%;
 	overflow: auto;
 	background-color: rgb(0,0,0);
-	background-color: rgba(0,0,0,0.4);
-}
+	background-color: rgba(0,0,0,0.5);
 
-.modal {
-	height: 70%;
-	width: 60%;
-	margin: 5% auto;
-	padding: 2rem;
-	border-radius: 20px;
-	background-color: #2E2E2E;
-	overflow: scroll;
-}
+	.modal {
+		height: 70%;
+		width: 60%;
+		margin: 5% auto;
+		padding: 2rem;
+		border-radius: 20px;
+		background-color: #2E2E2E;
+		overflow: scroll;
 
-.close {
-	color: #aaa;
-	float: right;
-	font-size: 28px;
-}
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			position: relative;
+			z-index: 100;
+		}
+		
+		.close:hover,
+		.close:focus {
+			color: #7a7a7a;
+			text-decoration: none;
+			cursor: pointer;
+		}
 
-.close:hover,
-.close:focus {
-	color: #7a7a7a;
-	text-decoration: none;
-	cursor: pointer;
+		.grid {
+			display: grid;
+			height: 100%;
+			column-gap: 2rem;
+			grid-template-columns: 50% 50%;
+
+			.col {
+				overflow: scroll;
+
+				.mb {
+					margin-top: 2rem;
+				}
+
+				.ghost-followers-info {
+					margin-top: 2rem;
+					font-weight: 600;
+					font-size: 18px;
+				}
+			}
+		}
+	}
+
 }

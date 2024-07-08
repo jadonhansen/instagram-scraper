@@ -9,12 +9,14 @@ function App() {
 	return (
 		<div className="app-container">
 			<h2>IG Scraplytics</h2>
-			<OverviewPanel></OverviewPanel>
 
 			<div className="grid">
+				<div>
+					<OverviewPanel></OverviewPanel>
+					<FansPanel></FansPanel>
+				</div>
 				<GhostsPanel></GhostsPanel>
 				<UnfollowersPanel></UnfollowersPanel>
-				<FansPanel></FansPanel>
 			</div>
 		</div>
 	);

@@ -32,7 +32,7 @@ const FansPanel: FunctionComponent<Props> = () => {
 	};
 
 	return (
-		<div className="panel">
+		<div className="panel fans-panel">
 			<h4>Fans {dataList && "(" + dataList.length + ")"}</h4>
 			<p className="info">Users who do not follow you but engage with your content.</p>
 

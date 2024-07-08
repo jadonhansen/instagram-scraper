@@ -1,0 +1,38 @@
+.overview-panel {
+	height: calc((100vh - 18rem) / 2) !important;
+	background-color: rgba(255, 255, 255, 0.2) !important;
+	box-shadow: -5px 6px 10px 2px rgba(10, 10, 10, 0.25) !important;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	.profile-info {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 2rem;
+		margin-bottom: 2rem;
+
+		.link {
+			text-align: right;
+			margin: 0;
+		}
+		
+		.link-mt {
+			margin-top: 0.5rem;
+		}
+		
+		.link:hover {
+			cursor: pointer;
+		}
+	}
+	
+	.score {
+		font-size: 60px;
+		margin: 0;
+		line-height: 50px;
+	
+		span {
+			font-size: 16px;
+		}
+	}
+}

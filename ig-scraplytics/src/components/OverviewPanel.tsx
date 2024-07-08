@@ -2,6 +2,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import FollowersModal from "./FollowersModal";
 import { getFollowing, getOrderedFollowers } from "../api/instagramServer";
 import { UserPostRelationship } from "../types/types";
+import "../styles/overview.css";
 
 interface Props {}
 
@@ -29,7 +30,7 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 	};
 
 	return (
-		<div className="panel">
+		<div className="panel overview-panel">
 			<FollowersModal
 				followersList={followersList}
 				followersServerError={followersServerError}
@@ -39,12 +40,25 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 				modalOpen={showModal}
 			></FollowersModal>
 
-			<h3>Overview</h3>
-			<p>profile photo, following counts, account score %</p>
-			<p onClick={() => setShowModal(true)}>
-				{followersList ? followersList.length : 0} {followersList?.length == 1 ? "follower" : "followers"}
-			</p>
-			<p onClick={() => setShowModal(true)}>{followingList ? followingList.length : 0} following</p>
+			<div>
+				<h3>Overview</h3>
+
+				<div className="profile-info">
+					<img src="" alt="profile photo" />
+					<div>
+						<p onClick={() => setShowModal(true)} className="link">
+							{followersList ? followersList.length : 0}{" "}
+							{followersList?.length == 1 ? "follower" : "followers"}
+						</p>
+						<p onClick={() => setShowModal(true)} className="link link-mt">
+							{followingList ? followingList.length : 0} following
+						</p>
+					</div>
+				</div>
+			</div>
+			<h4 className="score">
+				50% <span>account score</span>
+			</h4>
 		</div>
 	);
 };
