@@ -10,37 +10,52 @@ app.get("/", (req, res) => {
 
 app.get("/ghost_followers", async (req, res) => {
 	const { data, error } = await findGhostFollowers();
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
 
 	if (error) res.status(error.status).send(error.message);
-	else res.send(data);
+	else res.end(JSON.stringify(data));
 });
 
 app.get("/fans", async (req, res) => {
 	const { data, error } = await findFans();
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
 
 	if (error) res.status(error.status).send(error.message);
-	else res.send(data);
+	else res.end(JSON.stringify(data));
 });
 
 app.get("/unfollowers", async (req, res) => {
 	const { data, error } = await findUnfollowers();
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
 
 	if (error) res.status(error.status).send(error.message);
-	else res.send(data);
+	else res.end(JSON.stringify(data));
 });
 
 app.get("/ordered_followers", async (req, res) => {
 	const { data, error } = await orderedFollowers();
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
 
 	if (error) res.status(error.status).send(error.message);
-	else res.send(data);
+	else res.end(JSON.stringify(data));
 });
 
 app.get("/following", async (req, res) => {
 	const { data, error } = await findFollowing();
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
 
 	if (error) res.status(error.status).send(error.message);
-	else res.send(data);
+	else res.end(JSON.stringify(data));
 });
 
 app.listen(port, () => {
