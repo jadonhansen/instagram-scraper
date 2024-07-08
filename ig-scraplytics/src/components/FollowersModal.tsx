@@ -1,5 +1,6 @@
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 import { getOrderedFollowers } from "../api/instagramServer";
+import { UserPostRelationship } from "../types/types";
 import "../styles/modal.css";
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 }
 
 const FollowersModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
-	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
+	const [dataList, setDataList] = useState<UserPostRelationship[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 
 	useEffect(() => {
@@ -22,9 +23,13 @@ const FollowersModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => 
 		else setDataList(data);
 	};
 
-	const listOfUsers = (list: string[]): ReactNode => {
-		const arr: ReactNode[] = list.map((item) => {
-			return <p className="username">{item}</p>;
+	const listOfUsers = (list: UserPostRelationship[]): ReactNode => {
+		const arr: ReactNode[] = list.map((item, i) => {
+			return (
+				<p key={item.user + i} className="username">
+					{item.numberOfPostsLiked} - {item.user}
+				</p>
+			);
 		});
 
 		if (arr.length > 0) return arr;

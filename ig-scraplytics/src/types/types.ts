@@ -19,3 +19,8 @@ export type ErrorResponse<ErrorResponseData = undefined> = [ErrorResponseData] e
 export type ApiResponse<SuccessResponseData, ErrorResponseData = undefined> =
 	| SuccessResponse<SuccessResponseData>
 	| ErrorResponse<ErrorResponseData>;
+
+export interface UserPostRelationship {
+	user: string;
+	numberOfPostsLiked: number;
+}

@@ -19,8 +19,12 @@ const FansPanel: FunctionComponent<Props> = () => {
 	};
 
 	const listOfUsers = (list: string[]): ReactNode => {
-		const arr: ReactNode[] = list.map((item) => {
-			return <p className="username">{item}</p>;
+		const arr: ReactNode[] = list.map((item, i) => {
+			return (
+				<p key={item + i} className="username">
+					{item}
+				</p>
+			);
 		});
 
 		if (arr.length > 0) return arr;

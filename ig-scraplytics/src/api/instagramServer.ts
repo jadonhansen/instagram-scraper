@@ -1,4 +1,4 @@
-import { ApiResponse } from "../types/types";
+import { ApiResponse, UserPostRelationship } from "../types/types";
 
 const baseUrl = "http://localhost:3000";
 const isDebug = true;
@@ -50,7 +50,7 @@ export async function getUnfollowers(): Promise<ApiResponse<string[], Error>> {
 	}
 }
 
-export async function getOrderedFollowers(): Promise<ApiResponse<string[], Error>> {
+export async function getOrderedFollowers(): Promise<ApiResponse<UserPostRelationship[], Error>> {
 	const res = await fetch(`${baseUrl}/ordered_followers`, fetchOptions);
 
 	if (res.ok) {

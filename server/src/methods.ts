@@ -100,7 +100,7 @@ export async function findUnfollowers(): Promise<QueryResponse<string[]>> {
 
 	if (isDebug) console.log("Number of unfollowers: ", unfollowers.length);
 
-	return { data: ["findUnfollowers"], error: undefined };
+	return { data: unfollowers, error: undefined };
 }
 
 // order your followers from the most interactive to the least interactive
