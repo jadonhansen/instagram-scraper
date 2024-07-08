@@ -1,9 +1,13 @@
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 import { getOrderedFollowers } from "../api/instagramServer";
+import "../styles/modal.css";
 
-interface Props {}
+interface Props {
+	modalOpen: boolean;
+	closeModal(): void;
+}
 
-const FollowersModal: FunctionComponent<Props> = () => {
+const FollowersModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 
@@ -28,18 +32,25 @@ const FollowersModal: FunctionComponent<Props> = () => {
 	};
 
 	return (
-		<div className="panel">
-			<h4>Ordered Followers</h4>
-			<p>Followers are ordered from the most to the least interactive (out of the scraped posts).</p>
+		modalOpen && (
+			<div className="modal-container">
+				<div className="modal">
+					<span onClick={() => closeModal()} className="close">
+						&times;
+					</span>
+					<h3>Ordered Followers</h3>
+					<p>Followers are ordered from the most to the least interactive (out of the scraped posts).</p>
 
-			{dataList !== undefined ? (
-				<div className="ordered-followers-list">{listOfUsers(dataList)}</div>
-			) : serverError !== undefined ? (
-				<p>Error {JSON.stringify(serverError)}</p>
-			) : (
-				<p>Loading...</p>
-			)}
-		</div>
+					{dataList !== undefined ? (
+						<div className="ordered-followers-list">{listOfUsers(dataList)}</div>
+					) : serverError !== undefined ? (
+						<p>Error {JSON.stringify(serverError)}</p>
+					) : (
+						<p>Loading...</p>
+					)}
+				</div>
+			</div>
+		)
 	);
 };
 
