@@ -100,12 +100,11 @@ export async function findUnfollowers(): Promise<QueryResponse<string[]>> {
 
 	if (isDebug) console.log("Number of unfollowers: ", unfollowers.length);
 
-	// do calculations
 	return { data: ["findUnfollowers"], error: undefined };
 }
 
 // order your followers from the most interactive to the least interactive
-export async function orderedFollowers(): Promise<QueryResponse<string[]>> {
+export async function orderedFollowers(): Promise<QueryResponse<UserPostRelationship[]>> {
 	const followers = await queryTextFile(followersTxt);
 	const postLikes = await queryTextFile(postLikesTxt);
 
@@ -131,11 +130,13 @@ export async function orderedFollowers(): Promise<QueryResponse<string[]>> {
 		return { user: follower, numberOfPostsLiked: numOfLikes };
 	});
 
-	// TODO: hook up component to web app
-	console.log(relationships);
+	const sorted = relationships.sort((a, b) => {
+		return b.numberOfPostsLiked - a.numberOfPostsLiked;
+	});
 
-	// do calculations
-	return { data: ["orderedFollowers"], error: undefined };
+	if (isDebug) console.log("Number of ordered followers: ", sorted.length);
+
+	return { data: sorted, error: undefined };
 }
 
 // just returns a list of users you follow
