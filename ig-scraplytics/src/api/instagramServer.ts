@@ -3,11 +3,12 @@ import { ApiResponse } from "../types/types";
 const baseUrl = "http://localhost:3000";
 const isDebug = true;
 
-const headers = new Headers({ "content-type": "application/json" });
+// const headers = new Headers({ "Content-Type": "application/json" });
 const fetchOptions: RequestInit = {
 	method: "GET",
-	headers: headers,
-	mode: "no-cors",
+	// credentials: "include",
+	// headers: { "Content-Type": "application/json" },
+	mode: "cors",
 };
 
 export async function getGhostFollowers(): Promise<ApiResponse<string[], Error>> {
@@ -18,6 +19,8 @@ export async function getGhostFollowers(): Promise<ApiResponse<string[], Error>>
 		if (isDebug) console.log("getGhostFollowers()", data);
 		return { data, error: undefined };
 	} else {
+		console.log(["-", res]);
+
 		if (isDebug) console.log("getGhostFollowers()", res);
 		const error = new Error(res.statusText);
 		return { data: undefined, error };
