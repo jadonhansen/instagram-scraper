@@ -33,11 +33,11 @@ const UnfollowersPanel: FunctionComponent<Props> = () => {
 
 	return (
 		<div className="panel">
-			<h4>Unfollowers</h4>
-			<p>Users who do not follow you back.</p>
+			<h4>Unfollowers {dataList && "(" + dataList.length + ")"}</h4>
+			<p className="info">Users who do not follow you back.</p>
 
 			{dataList !== undefined ? (
-				<div className="unfollowers-list">{listOfUsers(dataList)}</div>
+				<div className="list">{listOfUsers(dataList)}</div>
 			) : serverError !== undefined ? (
 				<p>Error {JSON.stringify(serverError)}</p>
 			) : (

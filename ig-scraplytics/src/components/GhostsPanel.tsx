@@ -33,11 +33,11 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 
 	return (
 		<div className="panel">
-			<h4>Ghost Followers</h4>
-			<p>Users who follow you but do not engage with your content.</p>
+			<h4>Ghost Followers {dataList && "(" + dataList.length + ")"}</h4>
+			<p className="info">Users who follow you but do not engage with your content.</p>
 
 			{dataList !== undefined ? (
-				<div className="ghosts-list">{listOfUsers(dataList)}</div>
+				<div className="list">{listOfUsers(dataList)}</div>
 			) : serverError !== undefined ? (
 				<p>Error {JSON.stringify(serverError)}</p>
 			) : (

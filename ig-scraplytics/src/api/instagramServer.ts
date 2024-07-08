@@ -64,6 +64,20 @@ export async function getOrderedFollowers(): Promise<ApiResponse<UserPostRelatio
 	}
 }
 
+export async function getFollowing(): Promise<ApiResponse<string[], Error>> {
+	const res = await fetch(`${baseUrl}/following`, fetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("getFollowing()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("getFollowing()", res);
+		const error = new Error(res.statusText);
+		return { data: undefined, error };
+	}
+}
+
 export async function testServer(): Promise<ApiResponse<string[], Error>> {
 	const res = await fetch(`${baseUrl}/`, fetchOptions);
 

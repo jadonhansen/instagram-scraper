@@ -1,29 +1,18 @@
-import { FunctionComponent, ReactNode, useEffect, useState } from "react";
-import { getOrderedFollowers } from "../api/instagramServer";
+import { FunctionComponent, ReactNode } from "react";
 import { UserPostRelationship } from "../types/types";
 import "../styles/modal.css";
 
 interface Props {
 	modalOpen: boolean;
 	closeModal(): void;
+	followersList: UserPostRelationship[] | undefined;
+	followersServerError: Error | undefined;
+	followingList: string[] | undefined;
+	followingServerError: Error | undefined;
 }
 
-const FollowersModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
-	const [dataList, setDataList] = useState<UserPostRelationship[] | undefined>(undefined);
-	const [serverError, setServerError] = useState<Error | undefined>(undefined);
-
-	useEffect(() => {
-		getData();
-	}, []);
-
-	const getData = async () => {
-		const { data, error } = await getOrderedFollowers();
-
-		if (error) setServerError(error);
-		else setDataList(data);
-	};
-
-	const listOfUsers = (list: UserPostRelationship[]): ReactNode => {
+const FollowersModal: FunctionComponent<Props> = ({ modalOpen, followersServerError, followersList, closeModal }) => {
+	const listOfFollowers = (list: UserPostRelationship[]): ReactNode => {
 		const arr: ReactNode[] = list.map((item, i) => {
 			return (
 				<p key={item.user + i} className="username">
@@ -43,13 +32,15 @@ const FollowersModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => 
 					<span onClick={() => closeModal()} className="close">
 						&times;
 					</span>
-					<h3>Ordered Followers</h3>
-					<p>Followers are ordered from the most to the least interactive (out of the scraped posts).</p>
+					<h3>Ordered Followers {followersList && "(" + followersList.length + ")"}</h3>
+					<p className="info">
+						Followers are ordered from the most to the least interactive (out of the scraped posts).
+					</p>
 
-					{dataList !== undefined ? (
-						<div className="ordered-followers-list">{listOfUsers(dataList)}</div>
-					) : serverError !== undefined ? (
-						<p>Error {JSON.stringify(serverError)}</p>
+					{followersList !== undefined ? (
+						<div className="list">{listOfFollowers(followersList)}</div>
+					) : followersServerError !== undefined ? (
+						<p>Error {JSON.stringify(followersServerError)}</p>
 					) : (
 						<p>Loading...</p>
 					)}
