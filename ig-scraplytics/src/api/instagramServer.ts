@@ -6,7 +6,7 @@ const isDebug = true;
 // const headers = new Headers({ "Content-Type": "application/json" });
 const fetchOptions: RequestInit = {
 	method: "GET",
-	credentials: "include",
+	// credentials: "include",
 	// headers: { "Content-Type": "application/json" },
 	mode: "cors",
 };
