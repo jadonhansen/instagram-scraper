@@ -1,6 +1,7 @@
-import { FunctionComponent, ReactNode } from "react";
+import { FunctionComponent, ReactNode, useState } from "react";
 import { UserPostRelationship } from "../types/types";
 import "../styles/modal.css";
+import SearchFeature from "./SearchFeature";
 
 interface Props {
 	modalOpen: boolean;
@@ -19,6 +20,8 @@ const FollowersModal: FunctionComponent<Props> = ({
 	followingServerError,
 	closeModal,
 }) => {
+	const [followingSearchResults, setFingSearchResults] = useState<string[] | undefined>(undefined);
+
 	const listOfFollowers = (list: UserPostRelationship[]): ReactNode => {
 		const arr: ReactNode[] = list.map((item, i) => {
 			return (
@@ -82,13 +85,28 @@ const FollowersModal: FunctionComponent<Props> = ({
 						<div className="col">
 							<h4>Following {followingList && "(" + followingList.length + ")"}</h4>
 							<p className="info">Users you follow.</p>
+							<SearchFeature
+								searchResults={(res) => setFingSearchResults(res)}
+								searchableList={followingList}
+							></SearchFeature>
 
-							{followingList !== undefined ? (
+							{followingServerError !== undefined && <p>Error {JSON.stringify(followingServerError)}</p>}
+							{!followingList && !followingSearchResults && <p>Loading...</p>}
+
+							{followingSearchResults && (
+								<>
+									{followingSearchResults.length > 0 && (
+										<p>
+											{followingSearchResults.length} result
+											{followingSearchResults.length !== 1 && "s"}
+										</p>
+									)}
+									<div className="list">{listOfFollowing(followingSearchResults)}</div>
+								</>
+							)}
+
+							{!followingSearchResults && followingList && (
 								<div className="list">{listOfFollowing(followingList)}</div>
-							) : followingServerError !== undefined ? (
-								<p>Error {JSON.stringify(followingServerError)}</p>
-							) : (
-								<p>Loading...</p>
 							)}
 						</div>
 					</div>

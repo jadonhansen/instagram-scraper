@@ -1,7 +1,7 @@
 import { ApiResponse, UserPostRelationship } from "../types/types";
 
 const baseUrl = "http://localhost:3000";
-const isDebug = true;
+const isDebug = false;
 
 const fetchOptions: RequestInit = {
 	method: "GET",

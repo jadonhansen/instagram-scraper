@@ -1,0 +1,20 @@
+.search-input {
+	border: 1px solid rgb(183, 183, 183);
+	border-radius: 5px;
+	height: 30px;
+	width: 50%;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	color: white;
+	background-color: #8f8686;
+	outline: none;
+	margin-top: 1rem;
+}
+
+.search-input:focus-visible {
+	border: 1px solid rgb(255, 255, 255);
+}
+
+.search-input::placeholder {
+	color: rgb(208, 208, 208);
+}
