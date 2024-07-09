@@ -4,11 +4,12 @@ import GhostsPanel from "./components/GhostsPanel.tsx";
 import UnfollowersPanel from "./components/UnfollowersPanel.tsx";
 
 import "./styles/panels.css";
+import NavBar from "./components/NavBar.tsx";
 
 function App() {
 	return (
 		<div className="app-container">
-			<h2>IG Scraplytics</h2>
+			<NavBar></NavBar>
 
 			<div className="grid">
 				<div>

@@ -4,6 +4,8 @@ import { getFollowing, getOrderedFollowers } from "../api/instagramServer";
 import { UserPostRelationship } from "../types/types";
 import "../styles/overview.css";
 
+const isDebug = true;
+
 interface Props {}
 
 const OverviewPanel: FunctionComponent<Props> = () => {
@@ -27,6 +29,20 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 
 		if (followingData.error) setFollowingServerError(followingData.error);
 		else setFollowingList(followingData.data);
+	};
+
+	const calculateScore = (): number => {
+		if (followersList) {
+			const numOfGhosts = followersList.filter((follower) => {
+				return follower.numberOfPostsLiked !== 0;
+			}).length;
+
+			if (isDebug) console.log("calculateScore(): number of ghosts", numOfGhosts);
+			if (isDebug) console.log("calculateScore(): number of followers", followersList.length);
+
+			return numOfGhosts == 0 ? 0 : Math.floor((numOfGhosts / followersList.length) * 100);
+		}
+		return 0;
 	};
 
 	return (
@@ -57,7 +73,8 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 				</div>
 			</div>
 			<h4 className="score">
-				50% <span>account score</span>
+				{calculateScore()}% <span className="score-info">account score</span>
+				<span className="tooltip">The percentage of followers that engage with your content</span>
 			</h4>
 		</div>
 	);

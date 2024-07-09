@@ -1,12 +1,12 @@
 .search-input {
-	border: 1px solid rgb(183, 183, 183);
+	border: 1px solid rgb(175, 175, 175);
 	border-radius: 5px;
 	height: 30px;
 	width: 50%;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 	color: white;
-	background-color: #8f8686;
+	background-color: #757575;
 	outline: none;
 	margin-top: 1rem;
 }

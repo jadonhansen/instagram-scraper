@@ -27,12 +27,37 @@
 	}
 
 	.score {
+		position: relative;
+		display: inline-block;
 		font-size: 60px;
 		margin: 0;
 		line-height: 0.8;
 
-		span {
+		.tooltip {
+			visibility: hidden;
+			position: absolute;
+			width: fit-content;
+			bottom: 120%;
+			left: 0%;
+			padding: 10px;
+			text-align: center;
+			color: #fff;
+			font-size: 14px;
+			font-weight: normal;
+			line-height: normal;
+			border-radius: 10px;
+			background-color: rgba(42, 42, 42, 0.907);
+			z-index: 1;
+		}
+
+		.score-info {
 			font-size: 16px;
+		}
+	}
+
+	.score:hover {
+		.tooltip {
+			visibility: visible;
 		}
 	}
 }
