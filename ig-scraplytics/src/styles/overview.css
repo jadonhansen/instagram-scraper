@@ -16,21 +16,21 @@
 			text-align: right;
 			margin: 0;
 		}
-		
+
 		.link-mt {
 			margin-top: 0.5rem;
 		}
-		
+
 		.link:hover {
 			cursor: pointer;
 		}
 	}
-	
+
 	.score {
 		font-size: 60px;
 		margin: 0;
-		line-height: 50px;
-	
+		line-height: 0.8;
+
 		span {
 			font-size: 16px;
 		}

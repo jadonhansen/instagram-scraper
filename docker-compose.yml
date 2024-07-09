@@ -1,0 +1,58 @@
+volumes:
+  db:
+services:
+  webapp:
+    build: ./ig-scraplytics
+    ports:
+      - "5173:5173"
+    develop:
+      watch:
+        # sync
+        - action: sync
+          path: ./ig-scraplytics/src
+          target: /ig-scraplytics/src
+        - action: sync
+          path: ./ig-scraplytics/public
+          target: /ig-scraplytics/public
+        - action: sync
+          path: ./ig-scraplytics/index.html
+          target: ig-scraplytics/index.html
+        # rebuild
+        - action: rebuild
+          path: ./ig-scraplytics/package.json
+        # sync+restart
+        - action: sync+restart
+          path: ./ig-scraplytics/.eslintrc.cjs
+          target: /ig-scraplytics/.eslintrc.cjs
+        - action: sync+restart
+          path: ./ig-scraplytics/tsconfig.app.json
+          target: /ig-scraplytics/tsconfig.app.json
+        - action: sync+restart
+          path: ./ig-scraplytics/tsconfig.json
+          target: /ig-scraplytics/tsconfig.json
+        - action: sync+restart
+          path: ./ig-scraplytics/vite.config.ts
+          target: /ig-scraplytics/vite.config.ts
+  server:
+    build: ./server
+    ports:
+      - "3000:3000"
+    volumes:
+      - db:/db
+    develop:
+      watch:
+        # sync
+        - action: sync
+          path: ./server/src
+          target: /server/src
+        # rebuild
+        - action: rebuild
+          path: ./server/package.json
+        # sync+restart
+        - action: sync+restart
+          path: ./server/nodemon.json
+          target: /server/nodemon.json
+        - action: sync+restart
+          path: ./server/tsconfig.json
+          target: /server/tsconfig.json
+  # TODO: add scraper node app
