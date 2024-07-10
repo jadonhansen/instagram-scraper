@@ -1,18 +1,18 @@
 .search-input {
-	border: 1px solid rgb(175, 175, 175);
+	border: 1px solid rgb(113, 113, 113);
 	border-radius: 5px;
 	height: 30px;
 	width: 50%;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 	color: white;
-	background-color: #757575;
+	background-color: #28282800;
 	outline: none;
 	margin-top: 1rem;
 }
 
 .search-input:focus-visible {
-	border: 1px solid rgb(255, 255, 255);
+	border: 1px solid rgb(173, 173, 173);
 }
 
 .search-input::placeholder {

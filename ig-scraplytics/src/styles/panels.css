@@ -2,7 +2,7 @@
 	max-width: 100%;
 	height: calc(100vh - 12rem);
 	border-radius: 20px;
-	background-color: rgba(255, 255, 255, 0.08);
+	background-color: #282828;
 	box-shadow: -5px 6px 10px 2px rgba(10, 10, 10, 0.15);
 	padding: 2rem;
 	margin-bottom: 2rem;
