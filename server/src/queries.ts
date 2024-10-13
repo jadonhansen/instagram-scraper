@@ -13,7 +13,8 @@ export function queryTextFile(filePath: string): Promise<QueryResponse<string>> 
 	const prom: Promise<QueryResponse<string>> = new Promise((resolve, reject) => {
 		fs.createReadStream(path.join(__dirname, filePath), { encoding: "utf-8" })
 			.on("error", function (error) {
-				console.error(`Error reading from file path: ${filePath}.\nError: ${error.message}`);
+				if (isDebug) console.error(`Error reading from file path: ${filePath}.\nError: ${error.message}`);
+
 				reject({
 					data: undefined,
 					error: {
@@ -32,4 +33,32 @@ export function queryTextFile(filePath: string): Promise<QueryResponse<string>> 
 	});
 
 	return prom;
+}
+
+export function queryDirectoryFolders(filePath: string): QueryResponse<string[]> {
+	const folderPath = path.join(__dirname, filePath);
+	const list = fs.readdirSync(folderPath);
+
+	if (list) {
+		if (isDebug) console.log(`\nObtained folders from db path: ${folderPath}`);
+
+		const temp: string[] = [];
+
+		for (const item of list) {
+			const name = `${folderPath}/${item}`;
+			if (fs.statSync(name).isDirectory()) temp.push(item);
+		}
+
+		return { data: temp, error: undefined };
+	}
+
+	if (isDebug) console.log(`\nError obtaining folders from db path: ${folderPath}`);
+
+	return {
+		data: undefined,
+		error: {
+			status: 500,
+			message: "There was a problem fetching your profiles!",
+		},
+	};
 }

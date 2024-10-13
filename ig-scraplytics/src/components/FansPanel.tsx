@@ -14,7 +14,7 @@ const FansPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const { data, error } = await getFans();
+		const { data, error } = await getFans("jadon.hansen");
 
 		if (error) setServerError(error);
 		else setDataList(data);
@@ -40,7 +40,7 @@ const FansPanel: FunctionComponent<Props> = () => {
 			<SearchFeature searchResults={(res) => setSearchResults(res)} searchableList={dataList}></SearchFeature>
 
 			{serverError !== undefined && <p>Error {JSON.stringify(serverError)}</p>}
-			{!dataList && !searchResults && <p>Loading...</p>}
+			{!dataList && !searchResults && !serverError && <p>Loading...</p>}
 			{searchResults && (
 				<>
 					{searchResults.length > 0 && (

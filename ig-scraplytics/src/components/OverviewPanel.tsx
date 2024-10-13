@@ -21,8 +21,8 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 	}, []);
 
 	const getData = async () => {
-		const followersData = await getOrderedFollowers();
-		const followingData = await getFollowing();
+		const followersData = await getOrderedFollowers("jadon.hansen");
+		const followingData = await getFollowing("jadon.hansen");
 
 		if (followersData.error) setFollowersServerError(followersData.error);
 		else setFollowersList(followersData.data);

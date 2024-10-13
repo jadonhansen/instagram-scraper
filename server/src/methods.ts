@@ -1,15 +1,19 @@
 import { QueryResponse, UserPostRelationship } from "./types";
-import { queryTextFile } from "./queries";
+import { queryDirectoryFolders, queryTextFile } from "./queries";
 
-const followersTxt = "../../db/followers.txt";
-const followingTxt = "../../db/following.txt";
-const postLikesTxt = "../../db/postLikes.txt";
+const instagramUsersFolder = "../../db";
+const followersTxt = "followers.txt";
+const followingTxt = "following.txt";
+const postLikesTxt = "postLikes.txt";
+
 const isDebug = true;
 
 // find followers who do not like any of your posts
-export async function findGhostFollowers(): Promise<QueryResponse<string[]>> {
-	const followers = await queryTextFile(followersTxt);
-	const postLikes = await queryTextFile(postLikesTxt);
+export async function findGhostFollowers(user: string): Promise<QueryResponse<string[]>> {
+	const folderPath = instagramUsersFolder + "/" + user;
+
+	const followers = await queryTextFile(folderPath + "/" + followersTxt);
+	const postLikes = await queryTextFile(folderPath + "/" + postLikesTxt);
 
 	if (followers.error) return { error: followers.error, data: undefined };
 	if (postLikes.error) return { error: postLikes.error, data: undefined };
@@ -40,9 +44,11 @@ export async function findGhostFollowers(): Promise<QueryResponse<string[]>> {
 }
 
 // find users who like your posts but do not follow you
-export async function findFans(): Promise<QueryResponse<string[]>> {
-	const followers = await queryTextFile(followersTxt);
-	const postLikes = await queryTextFile(postLikesTxt);
+export async function findFans(user: string): Promise<QueryResponse<string[]>> {
+	const folderPath = instagramUsersFolder + "/" + user;
+
+	const followers = await queryTextFile(folderPath + "/" + followersTxt);
+	const postLikes = await queryTextFile(folderPath + "/" + postLikesTxt);
 
 	if (followers.error) return { error: followers.error, data: undefined };
 	if (postLikes.error) return { error: postLikes.error, data: undefined };
@@ -73,9 +79,11 @@ export async function findFans(): Promise<QueryResponse<string[]>> {
 }
 
 // find users who do not follow you back
-export async function findUnfollowers(): Promise<QueryResponse<string[]>> {
-	const followers = await queryTextFile(followersTxt);
-	const following = await queryTextFile(followingTxt);
+export async function findUnfollowers(user: string): Promise<QueryResponse<string[]>> {
+	const folderPath = instagramUsersFolder + "/" + user;
+
+	const followers = await queryTextFile(folderPath + "/" + followersTxt);
+	const following = await queryTextFile(folderPath + "/" + followingTxt);
 
 	if (followers.error) return { error: followers.error, data: undefined };
 	if (following.error) return { error: following.error, data: undefined };
@@ -104,9 +112,11 @@ export async function findUnfollowers(): Promise<QueryResponse<string[]>> {
 }
 
 // order your followers from the most interactive to the least interactive
-export async function orderedFollowers(): Promise<QueryResponse<UserPostRelationship[]>> {
-	const followers = await queryTextFile(followersTxt);
-	const postLikes = await queryTextFile(postLikesTxt);
+export async function orderedFollowers(user: string): Promise<QueryResponse<UserPostRelationship[]>> {
+	const folderPath = instagramUsersFolder + "/" + user;
+
+	const followers = await queryTextFile(folderPath + "/" + followersTxt);
+	const postLikes = await queryTextFile(folderPath + "/" + postLikesTxt);
 
 	if (followers.error) return { error: followers.error, data: undefined };
 	if (postLikes.error) return { error: postLikes.error, data: undefined };
@@ -140,8 +150,10 @@ export async function orderedFollowers(): Promise<QueryResponse<UserPostRelation
 }
 
 // just returns a list of users you follow
-export async function findFollowing(): Promise<QueryResponse<string[]>> {
-	const following = await queryTextFile(followingTxt);
+export async function findFollowing(user: string): Promise<QueryResponse<string[]>> {
+	const folderPath = instagramUsersFolder + "/" + user;
+
+	const following = await queryTextFile(folderPath + "/" + followingTxt);
 
 	if (following.error) return following;
 
@@ -156,4 +168,18 @@ export async function findFollowing(): Promise<QueryResponse<string[]>> {
 	}
 
 	return { data: arrFollowing, error: undefined };
+}
+
+// returns a list of instagram profiles, according to the directories in the db folder
+export function getInstagramUsers(): QueryResponse<string[]> {
+	const users = queryDirectoryFolders(instagramUsersFolder);
+
+	if (users.error) return users;
+
+	if (isDebug) {
+		console.log("\n\n--- getInstagramUsers() method ---");
+		console.log("Instagram users arr: ", users.data);
+	}
+
+	return { data: users.data, error: undefined };
 }

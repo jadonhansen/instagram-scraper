@@ -91,7 +91,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 							></SearchFeature>
 
 							{followingServerError !== undefined && <p>Error {JSON.stringify(followingServerError)}</p>}
-							{!followingList && !followingSearchResults && <p>Loading...</p>}
+							{!followingList && !followingSearchResults && !followingServerError && <p>Loading...</p>}
 
 							{followingSearchResults && (
 								<>

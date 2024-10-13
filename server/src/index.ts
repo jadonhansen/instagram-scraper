@@ -1,15 +1,29 @@
 import express from "express";
-import { findGhostFollowers, findFollowing, findFans, findUnfollowers, orderedFollowers } from "./methods";
+import {
+	findGhostFollowers,
+	findFollowing,
+	findFans,
+	findUnfollowers,
+	orderedFollowers,
+	getInstagramUsers,
+} from "./methods";
 
 const app = express();
 const port = 3000;
+
+// For parsing application/json
+app.use(express.json());
 
 app.get("/", (req, res) => {
 	res.send("Web server is running!");
 });
 
-app.get("/ghost_followers", async (req, res) => {
-	const { data, error } = await findGhostFollowers();
+app.post("/ghost_followers", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = await findGhostFollowers(user);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Content-Type", "application/json");
@@ -18,8 +32,12 @@ app.get("/ghost_followers", async (req, res) => {
 	else res.end(JSON.stringify(data));
 });
 
-app.get("/fans", async (req, res) => {
-	const { data, error } = await findFans();
+app.post("/fans", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = await findFans(user);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Content-Type", "application/json");
@@ -28,8 +46,12 @@ app.get("/fans", async (req, res) => {
 	else res.end(JSON.stringify(data));
 });
 
-app.get("/unfollowers", async (req, res) => {
-	const { data, error } = await findUnfollowers();
+app.post("/unfollowers", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = await findUnfollowers(user);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Content-Type", "application/json");
@@ -38,8 +60,12 @@ app.get("/unfollowers", async (req, res) => {
 	else res.end(JSON.stringify(data));
 });
 
-app.get("/ordered_followers", async (req, res) => {
-	const { data, error } = await orderedFollowers();
+app.post("/ordered_followers", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = await orderedFollowers(user);
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Content-Type", "application/json");
@@ -48,8 +74,23 @@ app.get("/ordered_followers", async (req, res) => {
 	else res.end(JSON.stringify(data));
 });
 
-app.get("/following", async (req, res) => {
-	const { data, error } = await findFollowing();
+app.post("/following", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = await findFollowing(user);
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
+
+	if (error) res.status(error.status).send(error.message);
+	else res.end(JSON.stringify(data));
+});
+
+app.get("/instagram_users", async (req, res) => {
+	const { data, error } = getInstagramUsers();
+
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Content-Type", "application/json");

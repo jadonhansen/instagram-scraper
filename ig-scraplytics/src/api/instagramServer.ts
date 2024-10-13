@@ -3,13 +3,36 @@ import { ApiResponse, UserPostRelationship } from "../types/types";
 const baseUrl = "http://localhost:3000";
 const isDebug = false;
 
-const fetchOptions: RequestInit = {
+const getFetchOptions: RequestInit = {
 	method: "GET",
 	mode: "cors",
 };
 
-export async function getGhostFollowers(): Promise<ApiResponse<string[], Error>> {
-	const res = await fetch(`${baseUrl}/ghost_followers`, fetchOptions);
+const postFetchOptions: RequestInit = {
+	method: "POST",
+	mode: "no-cors",
+	headers: { "Content-Type": "application/json" },
+};
+
+export async function getInstagramUsers(): Promise<ApiResponse<string[], Error>> {
+	const res = await fetch(`${baseUrl}/instagram_users`, getFetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("getInstagramUsers()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("getInstagramUsers()", res);
+		const error = new Error(res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function getGhostFollowers(user: string): Promise<ApiResponse<string[], Error>> {
+	postFetchOptions.body = JSON.stringify({ user: user });
+	const res = await fetch(`${baseUrl}/ghost_followers`, postFetchOptions);
+
+	console.log("sdfds", res);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -22,8 +45,9 @@ export async function getGhostFollowers(): Promise<ApiResponse<string[], Error>>
 	}
 }
 
-export async function getFans(): Promise<ApiResponse<string[], Error>> {
-	const res = await fetch(`${baseUrl}/fans`, fetchOptions);
+export async function getFans(user: string): Promise<ApiResponse<string[], Error>> {
+	postFetchOptions.body = JSON.stringify({ user: user });
+	const res = await fetch(`${baseUrl}/fans`, postFetchOptions);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -36,8 +60,9 @@ export async function getFans(): Promise<ApiResponse<string[], Error>> {
 	}
 }
 
-export async function getUnfollowers(): Promise<ApiResponse<string[], Error>> {
-	const res = await fetch(`${baseUrl}/unfollowers`, fetchOptions);
+export async function getUnfollowers(user: string): Promise<ApiResponse<string[], Error>> {
+	postFetchOptions.body = JSON.stringify({ user: user });
+	const res = await fetch(`${baseUrl}/unfollowers`, postFetchOptions);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -50,8 +75,9 @@ export async function getUnfollowers(): Promise<ApiResponse<string[], Error>> {
 	}
 }
 
-export async function getOrderedFollowers(): Promise<ApiResponse<UserPostRelationship[], Error>> {
-	const res = await fetch(`${baseUrl}/ordered_followers`, fetchOptions);
+export async function getOrderedFollowers(user: string): Promise<ApiResponse<UserPostRelationship[], Error>> {
+	postFetchOptions.body = JSON.stringify({ user: user });
+	const res = await fetch(`${baseUrl}/ordered_followers`, postFetchOptions);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -64,8 +90,9 @@ export async function getOrderedFollowers(): Promise<ApiResponse<UserPostRelatio
 	}
 }
 
-export async function getFollowing(): Promise<ApiResponse<string[], Error>> {
-	const res = await fetch(`${baseUrl}/following`, fetchOptions);
+export async function getFollowing(user: string): Promise<ApiResponse<string[], Error>> {
+	postFetchOptions.body = JSON.stringify({ user: user });
+	const res = await fetch(`${baseUrl}/following`, postFetchOptions);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -79,7 +106,7 @@ export async function getFollowing(): Promise<ApiResponse<string[], Error>> {
 }
 
 export async function testServer(): Promise<ApiResponse<string[], Error>> {
-	const res = await fetch(`${baseUrl}/`, fetchOptions);
+	const res = await fetch(`${baseUrl}/`, getFetchOptions);
 
 	if (res.ok) {
 		const data = await res.json();
