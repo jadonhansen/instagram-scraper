@@ -1,0 +1,62 @@
+.modal-container {
+	.modal {
+		.content {
+			padding-top: 2rem;
+
+			h4 {
+				font-size: 20px;
+				margin: 0;
+			}
+
+			.info {
+				font-size: 14px;
+				margin: 0;
+				margin-top: 0.5rem;
+				color: rgba(255, 255, 255, 0.5);
+				margin-bottom: 2rem;
+			}
+
+			.sub-heading {
+				margin: 0;
+				font-weight: 600;
+			}
+
+			.add-user-section {
+				margin-bottom: 2rem;
+
+				input {
+					width: 200px;
+				}
+
+				button {
+					margin-left: 0.5rem;
+					height: 32px;
+					width: 60px;
+					border: none;
+					border-radius: 5px;
+					background-color: rgb(0, 175, 228);
+					color: white;
+				}
+
+				button:hover {
+					cursor: pointer;
+					background-color: rgb(0, 162, 211);
+				}
+			}
+
+			.error {
+				color: rgb(255, 191, 0);
+				font-size: 14px;
+			}
+
+			.selected-username {
+				color: rgb(0, 175, 228);
+			}
+
+			.username:hover {
+				cursor: pointer;
+				color: white;
+			}
+		}
+	}
+}

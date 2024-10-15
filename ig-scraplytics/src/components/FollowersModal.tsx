@@ -1,5 +1,6 @@
 import { FunctionComponent, ReactNode, useState } from "react";
 import { UserPostRelationship } from "../types/types";
+import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 import SearchFeature from "./SearchFeature";
 
@@ -20,6 +21,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 	followingServerError,
 	closeModal,
 }) => {
+	const { selectedUser } = useUserManager();
 	const [followingSearchResults, setFingSearchResults] = useState<string[] | undefined>(undefined);
 
 	const listOfFollowers = (list: UserPostRelationship[]): ReactNode => {
@@ -59,6 +61,30 @@ const FollowersModal: FunctionComponent<Props> = ({
 		return <p>No users found.</p>;
 	};
 
+	const displayFollowing = () => {
+		if (followingServerError) return <p className="error">{followingServerError.message}</p>;
+		if (!followingList && !followingSearchResults) return <p>Loading...</p>;
+		if (!followingSearchResults && followingList)
+			return <div className="list">{listOfFollowing(followingList)}</div>;
+
+		if (followingSearchResults && followingSearchResults.length > 0) {
+			return (
+				<>
+					<p>
+						{followingSearchResults.length} result{followingSearchResults.length !== 1 && "s"}
+					</p>
+					<div className="list">{listOfFollowing(followingSearchResults)}</div>
+				</>
+			);
+		}
+	};
+
+	const displayFollowers = () => {
+		if (followersServerError) return <p className="error">{followersServerError.message}</p>;
+		if (followersList) return <div className="list">{listOfFollowers(followersList)}</div>;
+		return <p>Loading...</p>;
+	};
+
 	return (
 		modalOpen && (
 			<div className="modal-container">
@@ -74,13 +100,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 								Followers are ordered from the most to the least interactive (out of the scraped posts).
 							</p>
 
-							{followersList !== undefined ? (
-								<div className="list">{listOfFollowers(followersList)}</div>
-							) : followersServerError !== undefined ? (
-								<p className="error">{followersServerError.message}</p>
-							) : (
-								<p>Loading...</p>
-							)}
+							{selectedUser && displayFollowers()}
 						</div>
 						<div className="col">
 							<h4>Following {followingList && "(" + followingList.length + ")"}</h4>
@@ -90,26 +110,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 								searchableList={followingList}
 							></SearchFeature>
 
-							{followingServerError !== undefined && (
-								<p className="error">{followingServerError.message}</p>
-							)}
-							{!followingList && !followingSearchResults && !followingServerError && <p>Loading...</p>}
-
-							{followingSearchResults && (
-								<>
-									{followingSearchResults.length > 0 && (
-										<p>
-											{followingSearchResults.length} result
-											{followingSearchResults.length !== 1 && "s"}
-										</p>
-									)}
-									<div className="list">{listOfFollowing(followingSearchResults)}</div>
-								</>
-							)}
-
-							{!followingSearchResults && followingList && (
-								<div className="list">{listOfFollowing(followingList)}</div>
-							)}
+							{selectedUser && displayFollowing()}
 						</div>
 					</div>
 				</div>

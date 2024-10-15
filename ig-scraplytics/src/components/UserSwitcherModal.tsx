@@ -1,7 +1,7 @@
-import { FunctionComponent, useEffect, useState } from "react";
-import { getInstagramUsers } from "../api/instagramServer";
+import { FunctionComponent, useState } from "react";
 import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
+import "../styles/switcherModal.css";
 
 interface Props {
 	modalOpen: boolean;
@@ -9,25 +9,33 @@ interface Props {
 }
 
 const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
-	const { users, selectedUser, setSelectedUser, addUser } = useUserManager();
+	const { users, selectedUser, serverError, setSelectedUser, addUser } = useUserManager();
 
-	const [userList, setUserList] = useState<string[] | undefined>(undefined);
-	const [serverError, setServerError] = useState<Error | undefined>(undefined);
-
-	useEffect(() => {
-		getData();
-	}, []);
-
-	const getData = async () => {
-		const { data, error } = await getInstagramUsers();
-
-		if (error) setServerError(error);
-		else setUserList(data);
-	};
+	const [inputText, setInputText] = useState<string>("");
+	const [inputError, setInputError] = useState<string | undefined>();
+	const [loading, setLoading] = useState(false);
 
 	const selectUser = (user: string) => {
+		if (selectedUser === user) return;
+
 		setSelectedUser(user);
+		setInputError(undefined);
+		setInputText("");
 		closeModal();
+	};
+
+	const addInstagramUser = () => {
+		if (loading) return;
+		setInputError(undefined);
+
+		if (inputText && inputText.length > 0) {
+			if (users?.includes(inputText)) setInputError("This user already exists.");
+			else {
+				setLoading(true);
+				// TODO: API CALL
+				addUser(inputText);
+			}
+		}
 	};
 
 	return (
@@ -42,20 +50,38 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 						<h4>Users</h4>
 						<p className="info">Choose one of your Instagram users to process data from.</p>
 
-						{serverError !== undefined && <p>Error {JSON.stringify(serverError)}</p>}
-						{!userList && !serverError && <p>Loading...</p>}
+						<div className="add-user-section">
+							<p className="sub-heading">Add a user</p>
+							<input
+								className="search-input"
+								type="text"
+								value={inputText}
+								placeholder="Username"
+								onChange={(e) => setInputText(e.target.value.trim())}
+							></input>
+							<button onClick={() => addInstagramUser()}>Add</button>
+							{inputError && <p className="error">{inputError}</p>}
+						</div>
 
-						{userList &&
-							userList.length > 0 &&
-							userList.map((user: string, i: number) => {
+						<p className="sub-heading">Current users</p>
+
+						{serverError !== undefined ? (
+							<p className="error">{serverError.message}</p>
+						) : users && users.length > 0 ? (
+							users.map((user: string, i: number) => {
 								return (
-									<p key={i} className="username" onClick={() => selectUser(user)}>
+									<p
+										key={i}
+										className={selectedUser === user ? "selected-username" : "username"}
+										onClick={() => selectUser(user)}
+									>
 										{user}
 									</p>
 								);
-							})}
-
-						{userList?.length == 0 && <p>No users found in the database folder.</p>}
+							})
+						) : (
+							<p>Loading...</p>
+						)}
 					</div>
 				</div>
 			</div>

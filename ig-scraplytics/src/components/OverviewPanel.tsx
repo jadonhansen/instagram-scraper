@@ -26,11 +26,7 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 	}, [selectedUser]);
 
 	const getData = async (user: string | undefined) => {
-		if (!user) {
-			setFollowersServerError(new Error("Please select a user."));
-			setFollowingServerError(new Error("Please select a user."));
-			return;
-		}
+		if (!user) return;
 
 		const followersData = await getOrderedFollowers(user);
 		const followingData = await getFollowing(user);

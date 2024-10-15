@@ -1,8 +1,10 @@
-import React, { ReactNode, useContext, useState } from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { getInstagramUsers } from "../api/instagramServer";
 
 interface UserContext {
 	selectedUser: string | undefined;
 	users: string[] | undefined;
+	serverError: Error | undefined;
 	addUser(user: string): void;
 	setSelectedUser(user: string): void;
 }
@@ -10,6 +12,7 @@ interface UserContext {
 const context: UserContext = {
 	selectedUser: undefined,
 	users: undefined,
+	serverError: undefined,
 	addUser: () => {},
 	setSelectedUser: () => {},
 };
@@ -27,6 +30,24 @@ type Props = {
 export function UserProvider({ children }: Props) {
 	const [selectedUser, setSelectedUser] = useState<string | undefined>();
 	const [users, setUsers] = useState<string[] | undefined>();
+	const [serverError, setServerError] = useState<Error | undefined>(undefined);
+
+	useEffect(() => {
+		getUsers();
+	}, []);
+
+	const getUsers = async () => {
+		const { data, error } = await getInstagramUsers();
+
+		if (error) setServerError(error);
+		else {
+			if (data.length === 0) {
+				setServerError(new Error("No users found in the database folder."));
+				return;
+			}
+			setUsers(data);
+		}
+	};
 
 	function addUser(user: string) {
 		const temp = users ? [...users] : [];
@@ -40,6 +61,7 @@ export function UserProvider({ children }: Props) {
 			value={{
 				selectedUser: selectedUser,
 				users: users,
+				serverError: serverError,
 				addUser: addUser,
 				setSelectedUser: setSelectedUser,
 			}}
