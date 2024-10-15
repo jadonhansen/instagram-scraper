@@ -1,4 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
+import { useUserManager } from "../context/UserContext";
 import FollowersModal from "./FollowersModal";
 import { getFollowing, getOrderedFollowers } from "../api/instagramServer";
 import { UserPostRelationship } from "../types/types";
@@ -9,6 +10,8 @@ const isDebug = true;
 interface Props {}
 
 const OverviewPanel: FunctionComponent<Props> = () => {
+	const { selectedUser } = useUserManager();
+
 	const [showModal, setShowModal] = useState<boolean>(false);
 
 	const [followersList, setFollowersList] = useState<UserPostRelationship[] | undefined>(undefined);
@@ -17,12 +20,14 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 	const [followingServerError, setFollowingServerError] = useState<Error | undefined>(undefined);
 
 	useEffect(() => {
-		getData();
-	}, []);
+		getData(selectedUser);
+	}, [selectedUser]);
 
-	const getData = async () => {
-		const followersData = await getOrderedFollowers("jadon.hansen");
-		const followingData = await getFollowing("jadon.hansen");
+	const getData = async (user: string | undefined) => {
+		if (!user) return;
+
+		const followersData = await getOrderedFollowers(user);
+		const followingData = await getFollowing(user);
 
 		if (followersData.error) setFollowersServerError(followersData.error);
 		else setFollowersList(followersData.data);

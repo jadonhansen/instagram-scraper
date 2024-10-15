@@ -1,20 +1,25 @@
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 import { getUnfollowers } from "../api/instagramServer";
 import SearchFeature from "./SearchFeature";
+import { useUserManager } from "../context/UserContext";
 
 interface Props {}
 
 const UnfollowersPanel: FunctionComponent<Props> = () => {
+	const { selectedUser } = useUserManager();
+
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 	const [searchResults, setSearchResults] = useState<string[] | undefined>(undefined);
 
 	useEffect(() => {
-		getData();
-	}, []);
+		getData(selectedUser);
+	}, [selectedUser]);
 
-	const getData = async () => {
-		const { data, error } = await getUnfollowers("jadon.hansen");
+	const getData = async (user: string | undefined) => {
+		if (!user) return;
+
+		const { data, error } = await getUnfollowers(user);
 
 		if (error) setServerError(error);
 		else setDataList(data);

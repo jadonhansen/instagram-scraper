@@ -1,20 +1,25 @@
 import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 import { getGhostFollowers } from "../api/instagramServer";
+import { useUserManager } from "../context/UserContext";
 import SearchFeature from "./SearchFeature";
 
 interface Props {}
 
 const GhostsPanel: FunctionComponent<Props> = () => {
+	const { selectedUser } = useUserManager();
+
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 	const [searchResults, setSearchResults] = useState<string[] | undefined>(undefined);
 
 	useEffect(() => {
-		getData();
-	}, []);
+		getData(selectedUser);
+	}, [selectedUser]);
 
-	const getData = async () => {
-		const { data, error } = await getGhostFollowers("jadon.hansen");
+	const getData = async (user: string | undefined) => {
+		if (!user) return;
+
+		const { data, error } = await getGhostFollowers(user);
 
 		if (error) setServerError(error);
 		else setDataList(data);

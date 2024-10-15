@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { getInstagramUsers } from "../api/instagramServer";
+import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 }
 
 const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
+	const { users, selectedUser, setSelectedUser, addUser } = useUserManager();
+
 	const [userList, setUserList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 
@@ -20,6 +23,11 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 
 		if (error) setServerError(error);
 		else setUserList(data);
+	};
+
+	const selectUser = (user: string) => {
+		setSelectedUser(user);
+		closeModal();
 	};
 
 	return (
@@ -41,7 +49,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 							userList.length > 0 &&
 							userList.map((user: string, i: number) => {
 								return (
-									<p key={i} className="username">
+									<p key={i} className="username" onClick={() => selectUser(user)}>
 										{user}
 									</p>
 								);
