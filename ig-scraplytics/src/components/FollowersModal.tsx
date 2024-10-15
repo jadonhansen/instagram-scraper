@@ -77,7 +77,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 							{followersList !== undefined ? (
 								<div className="list">{listOfFollowers(followersList)}</div>
 							) : followersServerError !== undefined ? (
-								<p>Error {JSON.stringify(followersServerError)}</p>
+								<p className="error">{followersServerError.message}</p>
 							) : (
 								<p>Loading...</p>
 							)}
@@ -90,7 +90,9 @@ const FollowersModal: FunctionComponent<Props> = ({
 								searchableList={followingList}
 							></SearchFeature>
 
-							{followingServerError !== undefined && <p>Error {JSON.stringify(followingServerError)}</p>}
+							{followingServerError !== undefined && (
+								<p className="error">{followingServerError.message}</p>
+							)}
 							{!followingList && !followingSearchResults && !followingServerError && <p>Loading...</p>}
 
 							{followingSearchResults && (

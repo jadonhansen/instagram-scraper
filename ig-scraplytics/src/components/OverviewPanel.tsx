@@ -20,11 +20,17 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 	const [followingServerError, setFollowingServerError] = useState<Error | undefined>(undefined);
 
 	useEffect(() => {
+		setFollowersServerError(undefined);
+		setFollowingServerError(undefined);
 		getData(selectedUser);
 	}, [selectedUser]);
 
 	const getData = async (user: string | undefined) => {
-		if (!user) return;
+		if (!user) {
+			setFollowersServerError(new Error("Please select a user."));
+			setFollowingServerError(new Error("Please select a user."));
+			return;
+		}
 
 		const followersData = await getOrderedFollowers(user);
 		const followingData = await getFollowing(user);

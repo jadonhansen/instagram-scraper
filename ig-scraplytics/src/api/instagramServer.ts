@@ -29,10 +29,10 @@ export async function getInstagramUsers(): Promise<ApiResponse<string[], Error>>
 }
 
 export async function getGhostFollowers(user: string): Promise<ApiResponse<string[], Error>> {
-	postFetchOptions.body = JSON.stringify({ user: user });
-	const res = await fetch(`${baseUrl}/ghost_followers`, postFetchOptions);
-
-	console.log("sdfds", res);
+	const res = await fetch(`${baseUrl}/ghost_followers`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
 
 	if (res.ok) {
 		const data = await res.json();
@@ -46,8 +46,10 @@ export async function getGhostFollowers(user: string): Promise<ApiResponse<strin
 }
 
 export async function getFans(user: string): Promise<ApiResponse<string[], Error>> {
-	postFetchOptions.body = JSON.stringify({ user: user });
-	const res = await fetch(`${baseUrl}/fans`, postFetchOptions);
+	const res = await fetch(`${baseUrl}/fans`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
 
 	if (res.ok) {
 		const data = await res.json();
@@ -61,8 +63,10 @@ export async function getFans(user: string): Promise<ApiResponse<string[], Error
 }
 
 export async function getUnfollowers(user: string): Promise<ApiResponse<string[], Error>> {
-	postFetchOptions.body = JSON.stringify({ user: user });
-	const res = await fetch(`${baseUrl}/unfollowers`, postFetchOptions);
+	const res = await fetch(`${baseUrl}/unfollowers`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
 
 	if (res.ok) {
 		const data = await res.json();
@@ -76,8 +80,10 @@ export async function getUnfollowers(user: string): Promise<ApiResponse<string[]
 }
 
 export async function getOrderedFollowers(user: string): Promise<ApiResponse<UserPostRelationship[], Error>> {
-	postFetchOptions.body = JSON.stringify({ user: user });
-	const res = await fetch(`${baseUrl}/ordered_followers`, postFetchOptions);
+	const res = await fetch(`${baseUrl}/ordered_followers`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
 
 	if (res.ok) {
 		const data = await res.json();
@@ -91,8 +97,10 @@ export async function getOrderedFollowers(user: string): Promise<ApiResponse<Use
 }
 
 export async function getFollowing(user: string): Promise<ApiResponse<string[], Error>> {
-	postFetchOptions.body = JSON.stringify({ user: user });
-	const res = await fetch(`${baseUrl}/following`, postFetchOptions);
+	const res = await fetch(`${baseUrl}/following`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
 
 	if (res.ok) {
 		const data = await res.json();

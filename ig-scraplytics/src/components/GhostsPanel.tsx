@@ -13,11 +13,15 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	const [searchResults, setSearchResults] = useState<string[] | undefined>(undefined);
 
 	useEffect(() => {
+		setServerError(undefined);
 		getData(selectedUser);
 	}, [selectedUser]);
 
 	const getData = async (user: string | undefined) => {
-		if (!user) return;
+		if (!user) {
+			setServerError(new Error("Please select a user."));
+			return;
+		}
 
 		const { data, error } = await getGhostFollowers(user);
 
@@ -44,7 +48,7 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 			<p className="info">Users who follow you but do not engage with your content.</p>
 			<SearchFeature searchResults={(res) => setSearchResults(res)} searchableList={dataList}></SearchFeature>
 
-			{serverError !== undefined && <p>Error {JSON.stringify(serverError)}</p>}
+			{serverError !== undefined && <p className="error">{serverError.message}</p>}
 			{!dataList && !searchResults && !serverError && <p>Loading...</p>}
 			{searchResults && (
 				<>
