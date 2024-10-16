@@ -8,9 +8,13 @@ const getFetchOptions: RequestInit = {
 	mode: "cors",
 };
 
+// https://stackoverflow.com/questions/43262121/trying-to-use-fetch-and-pass-in-mode-no-cors
+/**
+ * No cors blocks the body
+ */
 const postFetchOptions: RequestInit = {
 	method: "POST",
-	mode: "no-cors",
+	// mode: "no-cors",
 	headers: { "Content-Type": "application/json" },
 };
 

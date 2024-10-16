@@ -18,6 +18,18 @@ app.get("/", (req, res) => {
 	res.send("Web server is running!");
 });
 
+/**
+ * This makes the cors stuff work :)
+ */
+app.options("*", async (req, res) => {
+	res.setHeader("Access-Control-Allow-Headers", "*")
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
+	res.end("");
+});
+
+
 app.post("/ghost_followers", async (req, res) => {
 	const user = req.body.user;
 	if (!user) return res.status(500).send("Undefined user in request body.");
