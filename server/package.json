@@ -14,7 +14,8 @@
 	"author": "Jadon Hansen",
 	"license": "ISC",
 	"dependencies": {
-		"express": "^4.19.2"
+		"express": "^4.19.2",
+		"fs-extra": "^11.2.0"
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.21",

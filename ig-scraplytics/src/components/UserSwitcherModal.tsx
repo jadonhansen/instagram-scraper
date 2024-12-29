@@ -1,7 +1,10 @@
+import { FaUser } from "react-icons/fa";
 import { FunctionComponent, useState } from "react";
+
 import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 import "../styles/switcherModal.css";
+import { addInstagramUser } from "../api/instagramServer";
 
 interface Props {
 	modalOpen: boolean;
@@ -24,7 +27,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 		closeModal();
 	};
 
-	const addInstagramUser = () => {
+	const add = async () => {
 		if (loading) return;
 		setInputError(undefined);
 
@@ -32,8 +35,18 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 			if (users?.includes(inputText)) setInputError("This user already exists.");
 			else {
 				setLoading(true);
-				// TODO: API CALL
-				addUser(inputText);
+				const { error, data } = await addInstagramUser(inputText);
+
+				if (data) {
+					addUser(inputText);
+					setInputText("");
+				}
+
+				if (error) {
+					setInputError(`Oops! Error adding user: ${error}`);
+				}
+
+				setLoading(false);
 			}
 		}
 	};
@@ -59,7 +72,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 								placeholder="Username"
 								onChange={(e) => setInputText(e.target.value.trim())}
 							></input>
-							<button onClick={() => addInstagramUser()}>Add</button>
+							<button onClick={() => add()}>Add</button>
 							{inputError && <p className="error">{inputError}</p>}
 						</div>
 
@@ -75,6 +88,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 										className={selectedUser === user ? "selected-username" : "username"}
 										onClick={() => selectUser(user)}
 									>
+										<FaUser />
 										{user}
 									</p>
 								);

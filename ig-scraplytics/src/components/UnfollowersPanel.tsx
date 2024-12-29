@@ -22,8 +22,11 @@ const UnfollowersPanel: FunctionComponent<Props> = () => {
 
 		const { data, error } = await getUnfollowers(user);
 
-		if (error) setServerError(error);
-		else setDataList(data);
+		if (error) {
+			setServerError(error);
+			setDataList(undefined);
+			setSearchResults(undefined);
+		} else setDataList(data);
 	};
 
 	const listOfUsers = (list: string[]): ReactNode => {
@@ -40,7 +43,7 @@ const UnfollowersPanel: FunctionComponent<Props> = () => {
 	};
 
 	const displayContent = () => {
-		if (serverError) return <p className="error">{serverError.message}</p>;
+		if (serverError) return <p className="error">{serverError.message}. Please rescrape data.</p>;
 		if (!dataList && !searchResults) return <p>Loading...</p>;
 		if (!searchResults && dataList) return <div className="list">{listOfUsers(dataList)}</div>;
 

@@ -1,3 +1,7 @@
+import path from "path";
+import * as fs from "fs-extra";
+import { fileURLToPath } from "url";
+
 import { QueryResponse, UserPostRelationship } from "./types";
 import { queryDirectoryFolders, queryTextFile } from "./queries";
 
@@ -5,6 +9,9 @@ const instagramUsersFolder = "../../db";
 const followersTxt = "followers.txt";
 const followingTxt = "following.txt";
 const postLikesTxt = "postLikes.txt";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const isDebug = true;
 
@@ -182,4 +189,31 @@ export function getInstagramUsers(): QueryResponse<string[]> {
 	}
 
 	return { data: users.data, error: undefined };
+}
+
+export async function addInstagramUser(user: string): Promise<QueryResponse<boolean>> {
+	const folderPath = path.join(__dirname, instagramUsersFolder + "/" + user);
+
+	try {
+		await fs.emptyDir(folderPath);
+
+		if (isDebug) {
+			console.log("\n\n--- addInstagramUser() method ---");
+			console.log("Added instagram user: ", user);
+		}
+	} catch (error) {
+		console.error("\nError while adding Instagram user:", error);
+
+		await fs.remove(folderPath);
+
+		return {
+			data: undefined,
+			error: {
+				status: 500,
+				message: `There was a problem adding Instagram user. Error: ${error}`,
+			},
+		};
+	}
+
+	return { data: true, error: undefined };
 }

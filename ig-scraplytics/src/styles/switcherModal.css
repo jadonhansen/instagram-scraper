@@ -49,6 +49,17 @@
 				font-size: 14px;
 			}
 
+			.username,
+			.selected-username {
+				display: flex;
+				align-items: center;
+
+				svg {
+					margin-right: 0.5rem;
+					font-size: 14px;
+				}
+			}
+
 			.selected-username {
 				color: rgb(0, 175, 228);
 			}

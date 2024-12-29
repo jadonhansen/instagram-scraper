@@ -62,7 +62,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 	};
 
 	const displayFollowing = () => {
-		if (followingServerError) return <p className="error">{followingServerError.message}</p>;
+		if (followingServerError) return <p className="error">{followingServerError.message}. Please rescrape data.</p>;
 		if (!followingList && !followingSearchResults) return <p>Loading...</p>;
 		if (!followingSearchResults && followingList)
 			return <div className="list">{listOfFollowing(followingList)}</div>;
@@ -80,7 +80,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 	};
 
 	const displayFollowers = () => {
-		if (followersServerError) return <p className="error">{followersServerError.message}</p>;
+		if (followersServerError) return <p className="error">{followersServerError.message}. Please rescrape data.</p>;
 		if (followersList) return <div className="list">{listOfFollowers(followersList)}</div>;
 		return <p>Loading...</p>;
 	};

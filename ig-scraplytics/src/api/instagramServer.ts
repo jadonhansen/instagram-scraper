@@ -32,6 +32,23 @@ export async function getInstagramUsers(): Promise<ApiResponse<string[], Error>>
 	}
 }
 
+export async function addInstagramUser(user: string): Promise<ApiResponse<string[], Error>> {
+	const res = await fetch(`${baseUrl}/instagram_users/add`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("addInstagramUser()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("addInstagramUser()", res);
+		const error = new Error(res.statusText);
+		return { data: undefined, error };
+	}
+}
+
 export async function getGhostFollowers(user: string): Promise<ApiResponse<string[], Error>> {
 	const res = await fetch(`${baseUrl}/ghost_followers`, {
 		...postFetchOptions,

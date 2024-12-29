@@ -31,11 +31,15 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 		const followersData = await getOrderedFollowers(user);
 		const followingData = await getFollowing(user);
 
-		if (followersData.error) setFollowersServerError(followersData.error);
-		else setFollowersList(followersData.data);
+		if (followersData.error) {
+			setFollowersServerError(followersData.error);
+			setFollowersList(undefined);
+		} else setFollowersList(followersData.data);
 
-		if (followingData.error) setFollowingServerError(followingData.error);
-		else setFollowingList(followingData.data);
+		if (followingData.error) {
+			setFollowingServerError(followingData.error);
+			setFollowingList(undefined);
+		} else setFollowingList(followingData.data);
 	};
 
 	const calculateScore = (): number => {
@@ -81,7 +85,7 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 			</div>
 			<h4 className="score">
 				{calculateScore()}% <span className="score-info">account score</span>
-				<span className="tooltip">The percentage of followers that engage with your content</span>
+				<span className="tooltip">The percentage of followers that engage with your scraped content</span>
 			</h4>
 		</div>
 	);
