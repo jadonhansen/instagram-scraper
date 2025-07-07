@@ -1,9 +1,10 @@
 # instagram-scraper
 
-Scrapes your Instagram following, post likes &amp; more for stats. Node.js backend coupled with React frontend.
+Scrapes your Instagram following, post likes &amp; more for stats. Node.js backend coupled with React frontend, booted with Docker.
 
 ### TODO
 
+-   Add turbo to repo - consider removing docker
 -   Fix docker compose (comms between containers?)
 -   Fix mounting db folder contents as db volume
 -   Code scraper
