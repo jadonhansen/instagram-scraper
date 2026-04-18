@@ -1,0 +1,39 @@
+---
+description: Keep .cursor docs and rules in sync with code changes
+alwaysApply: true
+---
+
+# Docs & Rules Stay In Sync
+
+After making any code change, and before ending your turn, audit whether the change invalidated anything in:
+
+- `.cursor/README.md`
+- `.cursor/rules/*.mdc`
+- Root `README.md` (roadmap / TODO list)
+- Per-package `README.md` files
+
+If anything is now stale, update it in the same turn as the code change. Do not leave it for "later".
+
+## What counts as stale
+
+Update docs/rules when you:
+
+- Add, remove, or rename a **route** on the server or a **client API function**.
+- Add, remove, or rename a **top-level folder**, **package**, or **script** in `package.json`.
+- Change the **response shape** (`QueryResponse<T>` / `ApiResponse<T>`) or any shared type.
+- Change the **db/** folder layout or file format.
+- Introduce or remove a **dependency, runtime, or tool** (e.g. adding Turborepo, updating npm dependency).
+- Complete an item from the roadmap TODO list — move it out of "Known Gaps" in `.cursor/README.md` and the root `README.md`.
+- Establish a new **convention** that contradicts or extends an existing rule (update the rule, don't add a second conflicting one).
+
+## What does NOT require a doc update
+
+- Pure bug fixes with no API/shape/convention change.
+- Internal refactors that don't cross a documented boundary.
+- Style-only edits (formatting, comments).
+
+## How to update
+
+- Edit the existing file — don't create parallel docs.
+- Keep each rule under ~50 lines. If a rule grows, split by concern rather than bloat.
+- Mention the doc update briefly in your final summary so the user knows what shifted.

@@ -1,0 +1,75 @@
+---
+description: High-standard TypeScript guidelines for all TS/TSX code
+globs: **/*.ts,**/*.tsx
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+## Type Safety
+
+- Never use `any`. Prefer `unknown` + narrowing, or a precise type.
+- Never use non-null assertions (`!`). Narrow with a guard or throw a typed error.
+- Never use `as` casts to silence the compiler. Only cast when crossing an unavoidable boundary (JSON parse, `fetch` body) and immediately validate.
+- Prefer `readonly` on arrays and object fields that aren't mutated.
+- Use `satisfies` instead of a type annotation when you want inference preserved:
+
+```ts
+const routes = {
+	fans: "/fans",
+	ghosts: "/ghost_followers",
+} satisfies Record<string, string>;
+```
+
+## API / IO Boundaries
+
+- All network or filesystem calls must return the project's discriminated-union response shape (`QueryResponse<T>` on the server, `ApiResponse<T>` on the client). Never throw across that boundary.
+- Narrow by checking `error` first, then use `data`:
+
+```ts
+const res = await getFans(user);
+if (res.error) return handle(res.error);
+render(res.data);
+```
+
+- Validate untrusted input (request bodies, JSON from `fetch`) before treating it as a typed value.
+
+## Errors
+
+```ts
+// BAD — swallows the error, loses context
+try {
+	await queryTextFile(path);
+} catch (e) {}
+
+// GOOD — return a typed error, log with context
+try {
+	await queryTextFile(path);
+} catch (error) {
+	console.error("queryTextFile failed", { path, error });
+	return { data: undefined, error: { status: 500, message: "Failed to read file" } };
+}
+```
+
+- Catch variables are `unknown` — narrow before use.
+- Don't log and rethrow the same error; pick one.
+
+## Modules & Imports
+
+- Both packages are ESM. On the **server**, include explicit `.js` extensions in relative imports of compiled output when required by `tsc`.
+- Import types with `import type { ... }` when the import is type-only.
+- No default exports for utilities or types — use named exports. React components may use default exports to match existing style.
+
+## Naming
+
+- `PascalCase` for types, interfaces, React components.
+- `camelCase` for variables, functions, file-exported values.
+- Boolean names read as predicates: `isDebug`, `hasError`, `canRetry`.
+- File names: `camelCase.ts` for modules, `PascalCase.tsx` for components (matches existing repo layout).
+
+## Avoid
+
+- `enum` — use string literal unions or `as const` objects.
+- `namespace` — use ES modules.
+- Mutating function parameters.
+- Dead code / commented-out blocks — delete them.

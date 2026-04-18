@@ -1,0 +1,29 @@
+---
+description: High-level repo context, conventions, and formatting for instagram-scraper
+alwaysApply: true
+---
+
+# Repo Context
+
+See `.cursor/README.md` for full architecture details. In short:
+
+- Monorepo with `ig-scraplytics/` (React + Vite), `server/` (Express), and `db/` (flat-file per-user text files).
+- Frontend talks to the server over `fetch`; server reads/writes `db/<username>/{followers,following,postLikes}.txt`.
+- Both packages are ESM TypeScript with `strict: true`.
+
+# Formatting (non-negotiable)
+
+Match the existing Prettier config in each package — do not reformat files:
+
+- **Tabs**, width `4` (`useTabs: true`, `tabWidth: 4`).
+- **Double quotes** (`singleQuote: false`).
+- `printWidth: 120`.
+
+Run `npm run pretty` in the relevant package if unsure.
+
+# Workflow Rules
+
+- Treat `db/` contents as PII. Never commit new real usernames; use `user1`, `user2`, etc. for fixtures.
+- Keep frontend (`ApiResponse`) and server (`QueryResponse`) response shapes in sync — both are `{ data, error }` discriminated unions.
+- When adding a new server route, also add the matching client function in `ig-scraplytics/src/api/instagramServer.ts`.
+- Don't introduce new runtimes/frameworks without checking the roadmap in `.cursor/README.md`.

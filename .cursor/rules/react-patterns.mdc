@@ -1,0 +1,64 @@
+---
+description: React component patterns for the ig-scraplytics frontend
+globs: ig-scraplytics/**/*.tsx
+alwaysApply: false
+---
+
+# React Patterns
+
+## Components
+
+- Function components only. No class components.
+- One component per file. File name matches component name (`FansPanel.tsx` → `FansPanel`).
+- Type props explicitly with an exported `interface FooProps`. Don't inline anonymous prop types.
+- Prefer children composition over "god" components with many boolean flags.
+
+```tsx
+interface PanelProps {
+	title: string;
+	children: React.ReactNode;
+}
+
+export default function Panel({ title, children }: PanelProps) {
+	return (
+		<section>
+			<h2>{title}</h2>
+			{children}
+		</section>
+	);
+}
+```
+
+## State & Effects
+
+- Derive, don't duplicate. If a value can be computed from props/state, compute it — don't store it.
+- Effects are for syncing with external systems (fetch, subscriptions). Don't use `useEffect` to transform state in response to other state.
+- Always specify the full dependency array. Don't silence `react-hooks/exhaustive-deps`.
+- Extract non-trivial side-effect logic into a custom hook (`useFans`, `useGhosts`, …) and keep the component declarative.
+
+## Data Fetching
+
+- Call the `src/api/instagramServer.ts` helpers — never `fetch` inline in a component.
+- Render three states explicitly: loading, error, success. Don't render stale data next to an error.
+
+```tsx
+if (loading) return <Spinner />;
+if (error) return <ErrorBanner message={error.message} />;
+return <List items={data} />;
+```
+
+## Context
+
+- `UserContext` is the single source of truth for the selected Instagram user. Don't pass `user` through props when the context is available.
+- Keep contexts small and focused. Split before they grow multi-purpose.
+
+## JSX Hygiene
+
+- Use semantic elements (`<button>`, `<nav>`, `<section>`) over `<div>` with `role`.
+- Give every list item a stable `key` — never the array index for reorderable lists.
+- Self-close empty elements: `<NavBar />`, not `<NavBar></NavBar>`.
+
+## Styling
+
+- CSS lives in `src/styles/`, imported from the component that owns it.
+- Use BEM-ish class names already present in the codebase (`panel`, `panel__title`, etc.) — don't introduce a CSS framework without discussion.
