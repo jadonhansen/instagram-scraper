@@ -49,7 +49,8 @@ export async function addInstagramUser(user: string): Promise<ApiResponse<string
 	}
 }
 
-export async function getGhostFollowers(user: string): Promise<ApiResponse<string[], Error>> {
+// data is null when the user has no post likes data, so ghosts cannot be worked out
+export async function getGhostFollowers(user: string): Promise<ApiResponse<string[] | null, Error>> {
 	const res = await fetch(`${baseUrl}/ghost_followers`, {
 		...postFetchOptions,
 		body: JSON.stringify({ user: user }),

@@ -25,7 +25,7 @@ instagram-scraper/
 
 ## Core Domain Concepts
 
-- **Ghost followers**: follow you but never liked a post.
+- **Ghost followers**: follow you but never liked a post. `/ghost_followers` returns `null` when `postLikes.txt` has no entries, and the panel shows a no-data state.
 - **Fans**: like your posts but don't follow you.
 - **Unfollowers**: you follow them, they don't follow back.
 - **Ordered followers**: followers ranked by number of posts liked.

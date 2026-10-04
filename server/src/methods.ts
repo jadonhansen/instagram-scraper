@@ -11,8 +11,8 @@ const __dirname = path.dirname(__filename);
 
 const isDebug = true;
 
-// find followers who do not like any of your posts
-export async function findGhostFollowers(user: string): Promise<QueryResponse<string[]>> {
+// find followers who do not like any of your posts; null when there is no post likes data to compare against
+export async function findGhostFollowers(user: string): Promise<QueryResponse<string[] | null>> {
 	const folderPath = instagramUsersFolder + "/" + user;
 
 	const followers = await queryTextFile(folderPath + "/" + followersTxt);
@@ -32,6 +32,11 @@ export async function findGhostFollowers(user: string): Promise<QueryResponse<st
 		console.log("\n\n--- findGhostFollowers() method ---");
 		console.log("Followers arr len: ", arrFollowers.length);
 		console.log("Post likes arr len: ", arrPostLikes.length);
+	}
+
+	if (arrPostLikes.every((liker) => liker.trim() === "")) {
+		if (isDebug) console.log("No post likes data, so ghost followers cannot be determined.");
+		return { data: null, error: undefined };
 	}
 
 	const uniquePostLikes = [...new Set(arrPostLikes)];

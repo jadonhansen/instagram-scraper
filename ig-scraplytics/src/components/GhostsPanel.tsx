@@ -9,6 +9,7 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	const { selectedUser, dataVersion } = useUserManager();
 
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
+	const [noPostLikes, setNoPostLikes] = useState(false);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 	const [searchResults, setSearchResults] = useState<string[] | undefined>(undefined);
 
@@ -21,8 +22,12 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 		if (!user) return;
 
 		const { data, error } = await getGhostFollowers(user);
+		setNoPostLikes(data === null);
 
-		if (error) {
+		if (data === null) {
+			setDataList(undefined);
+			setSearchResults(undefined);
+		} else if (error) {
 			setServerError(error);
 			setDataList(undefined);
 			setSearchResults(undefined);
@@ -43,6 +48,10 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	};
 
 	const displayContent = () => {
+		if (noPostLikes)
+			return (
+				<p>No data. There are no post likes for this account yet, so ghost followers cannot be worked out.</p>
+			);
 		if (serverError) return <p className="error">{serverError.message}. Please rescrape data.</p>;
 		if (!dataList && !searchResults) return <p>Loading...</p>;
 		if (!searchResults && dataList) return <div className="list">{listOfUsers(dataList)}</div>;
