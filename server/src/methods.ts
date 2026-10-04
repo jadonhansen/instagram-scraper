@@ -76,9 +76,9 @@ export async function findFans(user: string): Promise<QueryResponse<string[]>> {
 
 	const uniquePostLikes = [...new Set(arrPostLikes)];
 
-	// removes users who are followers
+	// removes users who are followers, and the blank line an empty postLikes.txt splits into
 	const fans = uniquePostLikes.filter((user) => {
-		return !arrFollowers.includes(user);
+		return user.trim() !== "" && !arrFollowers.includes(user);
 	});
 
 	if (isDebug) console.log("Number of fans: ", fans.length);
