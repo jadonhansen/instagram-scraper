@@ -121,9 +121,9 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 		modalOpen && (
 			<div className="modal-container">
 				<div className="modal">
-					<span onClick={() => closeModal()} className="close">
+					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;
-					</span>
+					</button>
 
 					<div className="content scrape-content">
 						<h4>Scrape</h4>
@@ -140,6 +140,7 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 								type="text"
 								value={inputText}
 								placeholder="Username"
+								aria-label="Instagram username to scrape"
 								disabled={running}
 								onChange={(e) => setInputText(e.target.value.trim())}
 							></input>
@@ -163,6 +164,7 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 								autoComplete="off"
 								value={sessionId}
 								placeholder="sessionid cookie"
+								aria-label="Instagram sessionid cookie"
 								disabled={running}
 								onChange={(e) => setSessionId(e.target.value.trim())}
 							></input>

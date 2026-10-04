@@ -1,12 +1,14 @@
 import { FunctionComponent, useEffect, useState } from "react";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 import "../styles/searchInput.css";
 
 interface Props {
+	label?: string;
 	searchableList: string[] | undefined;
 	searchResults(results: string[] | undefined): void;
 }
 
-const SearchFeature: FunctionComponent<Props> = ({ searchResults, searchableList }) => {
+const SearchFeature: FunctionComponent<Props> = ({ label = "Search", searchResults, searchableList }) => {
 	const [inputText, setInputText] = useState<string>("");
 
 	useEffect(() => {
@@ -21,13 +23,17 @@ const SearchFeature: FunctionComponent<Props> = ({ searchResults, searchableList
 	}, [searchableList, inputText]);
 
 	return (
-		<input
-			className="search-input"
-			type="text"
-			value={inputText}
-			placeholder="Search"
-			onChange={(e) => setInputText(e.target.value.trim())}
-		></input>
+		<label className="search-field">
+			<FaMagnifyingGlass aria-hidden="true" />
+			<input
+				className="search-input"
+				type="search"
+				value={inputText}
+				placeholder="Search"
+				aria-label={label}
+				onChange={(e) => setInputText(e.target.value.trim())}
+			></input>
+		</label>
 	);
 };
 

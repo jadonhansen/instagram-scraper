@@ -55,9 +55,9 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 		modalOpen && (
 			<div className="modal-container">
 				<div className="modal">
-					<span onClick={() => closeModal()} className="close">
+					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;
-					</span>
+					</button>
 
 					<div className="content">
 						<h4>Users</h4>
@@ -70,6 +70,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 								type="text"
 								value={inputText}
 								placeholder="Username"
+								aria-label="Instagram username to add"
 								onChange={(e) => setInputText(e.target.value.trim())}
 							></input>
 							<button onClick={() => add()}>Add</button>
@@ -83,14 +84,16 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 						) : users && users.length > 0 ? (
 							users.map((user: string, i: number) => {
 								return (
-									<p
+									<button
+										type="button"
 										key={i}
 										className={selectedUser === user ? "selected-username" : "username"}
+										aria-current={selectedUser === user ? "true" : undefined}
 										onClick={() => selectUser(user)}
 									>
 										<FaUser />
 										{user}
-									</p>
+									</button>
 								);
 							})
 						) : (

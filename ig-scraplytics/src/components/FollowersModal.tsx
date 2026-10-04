@@ -92,9 +92,9 @@ const FollowersModal: FunctionComponent<Props> = ({
 		modalOpen && (
 			<div className="modal-container">
 				<div className="modal">
-					<span onClick={() => closeModal()} className="close">
+					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;
-					</span>
+					</button>
 
 					<div className="grid">
 						<div className="col">

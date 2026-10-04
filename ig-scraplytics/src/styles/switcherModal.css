@@ -1,73 +1,63 @@
 .modal-container {
 	.modal {
-		.content {
-			padding-top: 2rem;
-
-			h4 {
-				font-size: 20px;
-				margin: 0;
-			}
-
-			.info {
-				font-size: 14px;
-				margin: 0;
-				margin-top: 0.5rem;
-				color: rgba(255, 255, 255, 0.5);
-				margin-bottom: 2rem;
-			}
+		.add-user-section {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: var(--space-2);
+			margin-bottom: var(--space-6);
 
 			.sub-heading {
-				margin: 0;
-				font-weight: 600;
+				width: 100%;
 			}
 
-			.add-user-section {
-				margin-bottom: 2rem;
+			.search-input {
+				width: min(280px, 100%);
+			}
 
-				input {
-					width: 200px;
-				}
+			button {
+				min-height: 44px;
+				padding: 0 var(--space-5);
+				border: none;
+				border-radius: var(--radius-pill);
+				background-color: var(--color-accent);
+				color: #1a0d05;
+				font-weight: var(--weight-medium);
+				cursor: pointer;
+			}
 
-				button {
-					margin-left: 0.5rem;
-					height: 32px;
-					width: 60px;
-					border: none;
-					border-radius: 5px;
-					background-color: rgb(0, 175, 228);
-					color: white;
-				}
+			button:hover:not(:disabled) {
+				background-color: var(--color-accent-hover);
+			}
 
-				button:hover {
-					cursor: pointer;
-					background-color: rgb(0, 162, 211);
-				}
+			button:disabled {
+				cursor: not-allowed;
+				opacity: 0.5;
 			}
 
 			.error {
-				color: rgb(255, 191, 0);
-				font-size: 14px;
+				width: 100%;
 			}
+		}
 
-			.username,
-			.selected-username {
-				display: flex;
-				align-items: center;
+		button.username,
+		button.selected-username {
+			width: 100%;
+			min-height: 40px;
+			border: none;
+			background: none;
+			text-align: left;
+			cursor: pointer;
+		}
 
-				svg {
-					margin-right: 0.5rem;
-					font-size: 14px;
-				}
-			}
+		.selected-username {
+			color: var(--color-accent-hover);
+			font-weight: var(--weight-semibold);
+		}
 
-			.selected-username {
-				color: rgb(0, 175, 228);
-			}
-
-			.username:hover {
-				cursor: pointer;
-				color: white;
-			}
+		.username:hover {
+			cursor: pointer;
+			background-color: var(--color-surface-hover);
 		}
 	}
 }
