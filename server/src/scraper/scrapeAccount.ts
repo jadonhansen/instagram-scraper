@@ -23,6 +23,8 @@ export interface ScrapeOptions {
 	sessionId?: string;
 	headless?: boolean;
 	loginTimeoutMs?: number;
+	// aborting closes the browser and rejects with CANCELLED; nothing is written
+	signal?: AbortSignal;
 	onProgress?(progress: ScrapeProgress): void;
 }
 
@@ -41,7 +43,12 @@ export async function scrapeAccount(options: ScrapeOptions): Promise<ScrapeSumma
 	assertValidUsername(username);
 	report({ phase: "starting", fetched: 0, total: 0 });
 
+	const { signal } = options;
+	if (signal?.aborted) throw cancelledError();
+
 	const session = await openSession(headless);
+	const closeOnAbort = () => void session.context.close().catch(() => undefined);
+	signal?.addEventListener("abort", closeOnAbort, { once: true });
 
 	try {
 		if (options.sessionId) await importSessionCookie(session.context, options.sessionId);
@@ -57,8 +64,19 @@ export async function scrapeAccount(options: ScrapeOptions): Promise<ScrapeSumma
 		let total = 0;
 
 		const client = new InstagramClient(createPageFetcher(session.page), {
-			onWait: (reason, ms) =>
-				report({ phase: currentPhase, fetched, total, message: `Paused ${ms / 1000}s (${reason})` }),
+			sleep: (ms) => abortableSleep(ms, signal),
+			onRateLimited: ({ endpoint, status, body, waitMs }) => {
+				console.warn(
+					`\nInstagram rate-limited ${endpoint} (HTTP ${status}) during ${currentPhase} at ${fetched}/${total}. ` +
+						`Waiting ${waitMs / 1000}s. Response: ${body.slice(0, 300)}`,
+				);
+				report({
+					phase: currentPhase,
+					fetched,
+					total,
+					message: `Instagram rate-limited ${endpoint} (HTTP ${status}). Paused ${waitMs / 1000}s.`,
+				});
+			},
 		});
 
 		report({ phase: "profile", fetched: 0, total: 0 });
@@ -71,8 +89,7 @@ export async function scrapeAccount(options: ScrapeOptions): Promise<ScrapeSumma
 			throw new ScrapeError("LIST_NOT_VISIBLE", `"${username}" is private and your account does not follow it.`);
 		}
 
-		const userFolderPath = path.join(instagramUsersFolderPath, username);
-		const summary: ScrapeSummary = { username };
+		const collected: Partial<Record<ListKind, string[]>> = {};
 
 		for (const kind of lists) {
 			currentPhase = kind;
@@ -80,18 +97,48 @@ export async function scrapeAccount(options: ScrapeOptions): Promise<ScrapeSumma
 			total = kind === "followers" ? profile.followerCount : profile.followingCount;
 			report({ phase: kind, fetched, total });
 
-			const usernames = await collectList(client, kind, profile.id, (count) => {
+			collected[kind] = await collectList(client, kind, profile.id, (count) => {
 				fetched = count;
 				report({ phase: kind, fetched, total });
 			});
+		}
 
+		// written only once every list is in, so a failed or stopped run leaves the old files untouched
+		const userFolderPath = path.join(instagramUsersFolderPath, username);
+		const summary: ScrapeSummary = { username };
+		for (const kind of lists) {
+			const usernames = collected[kind] ?? [];
 			await writeUserList(userFolderPath, listFiles[kind], usernames);
 			summary[kind] = usernames.length;
 		}
 
 		await ensureFileExists(userFolderPath, postLikesTxt);
 		return summary;
+	} catch (error) {
+		if (signal?.aborted) throw cancelledError();
+		throw error;
 	} finally {
+		signal?.removeEventListener("abort", closeOnAbort);
 		await session.context.close().catch(() => undefined);
 	}
+}
+
+function cancelledError(): ScrapeError {
+	return new ScrapeError("CANCELLED", "The scrape was stopped. No files were changed.");
+}
+
+function abortableSleep(ms: number, signal: AbortSignal | undefined): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (signal?.aborted) return reject(cancelledError());
+
+		const onAbort = () => {
+			clearTimeout(timer);
+			reject(cancelledError());
+		};
+		const timer = setTimeout(() => {
+			signal?.removeEventListener("abort", onAbort);
+			resolve();
+		}, ms);
+		signal?.addEventListener("abort", onAbort, { once: true });
+	});
 }

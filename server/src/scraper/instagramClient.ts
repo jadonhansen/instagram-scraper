@@ -8,19 +8,26 @@ export interface FetchResult {
 // Performs a GET against instagram.com from inside the logged-in page, so cookies and CSRF come from the real session.
 export type PageFetcher = (path: string) => Promise<FetchResult>;
 
+export interface RateLimitInfo {
+	endpoint: string;
+	status: number;
+	body: string;
+	waitMs: number;
+}
+
 export interface ClientOptions {
 	minDelayMs: number;
 	maxDelayMs: number;
 	rateLimitBackoffMs: number[];
 	sleep(ms: number): Promise<void>;
 	random(): number;
-	onWait?(reason: string, ms: number): void;
+	onRateLimited?(info: RateLimitInfo): void;
 }
 
 export const defaultClientOptions: ClientOptions = {
 	minDelayMs: 2000,
 	maxDelayMs: 5000,
-	rateLimitBackoffMs: [30_000, 60_000, 120_000],
+	rateLimitBackoffMs: [60_000, 120_000, 300_000, 600_000],
 	sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 	random: Math.random,
 };
@@ -121,14 +128,15 @@ export class InstagramClient {
 			const json = parseJson(res.body);
 
 			if (isRateLimited(res, json)) {
+				const endpoint = path.split("?")[0];
 				const backoff = this.options.rateLimitBackoffMs[attempt];
 				if (backoff === undefined) {
 					throw new ScrapeError(
 						"RATE_LIMITED",
-						`Instagram kept rate-limiting ${path.split("?")[0]}. Wait at least an hour before scraping again.`,
+						`Instagram kept rate-limiting ${endpoint}. Wait at least an hour before scraping again.`,
 					);
 				}
-				this.options.onWait?.("rate limited", backoff);
+				this.options.onRateLimited?.({ endpoint, status: res.status, body: res.body, waitMs: backoff });
 				await this.options.sleep(backoff);
 				continue;
 			}

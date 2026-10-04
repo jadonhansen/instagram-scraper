@@ -104,9 +104,16 @@ export function createPageFetcher(page: Page): PageFetcher {
 		return page.evaluate(
 			async ({ url, appId }) => {
 				const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? "";
+				// the web app stores this claim after login and sends it on every API call
+				const claim = sessionStorage.getItem("www-claim-v2") ?? "0";
 				const res = await fetch(url, {
 					credentials: "include",
-					headers: { "X-IG-App-ID": appId, "X-Requested-With": "XMLHttpRequest", "X-CSRFToken": csrf },
+					headers: {
+						"X-IG-App-ID": appId,
+						"X-IG-WWW-Claim": claim,
+						"X-Requested-With": "XMLHttpRequest",
+						"X-CSRFToken": csrf,
+					},
 				});
 				return { status: res.status, body: await res.text() };
 			},

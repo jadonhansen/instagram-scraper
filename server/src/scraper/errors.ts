@@ -7,7 +7,8 @@ export type ScrapeErrorCode =
 	| "USER_NOT_FOUND"
 	| "LIST_NOT_VISIBLE"
 	| "UNEXPECTED_RESPONSE"
-	| "BROWSER_CLOSED";
+	| "BROWSER_CLOSED"
+	| "CANCELLED";
 
 export class ScrapeError extends Error {
 	readonly code: ScrapeErrorCode;

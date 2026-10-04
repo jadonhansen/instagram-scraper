@@ -154,6 +154,17 @@ app.get("/scrape/:id", async (req, res) => {
 	else res.end(JSON.stringify(data));
 });
 
+app.post("/scrape/:id/stop", async (req, res) => {
+	const { data, error } = scrapeJobs.stop(req.params.id);
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
+
+	if (error) res.status(error.status).send(error.message);
+	else res.end(JSON.stringify(data));
+});
+
 app.listen(port, () => {
 	console.log(`Web server listening at http://localhost:${port}`);
 });

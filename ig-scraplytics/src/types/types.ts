@@ -30,7 +30,7 @@ export type ScrapePhase = "starting" | "waiting_for_login" | "profile" | "follow
 export interface ScrapeJob {
 	id: string;
 	username: string;
-	status: "running" | "done" | "error";
+	status: "running" | "done" | "error" | "cancelled";
 	progress: { phase: ScrapePhase; fetched: number; total: number; message?: string };
 	summary?: { username: string; followers?: number; following?: number };
 	error?: { code: string; message: string };

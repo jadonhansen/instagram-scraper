@@ -36,6 +36,21 @@ describe("ScrapeJobManager", () => {
 		expect(manager.get(id).data).toMatchObject({ status: "done", summary: { followers: 2, following: 1 } });
 	});
 
+	it("marks a stopped job cancelled", async () => {
+		const manager = new ScrapeJobManager(
+			({ signal }) =>
+				new Promise((_resolve, reject) =>
+					signal?.addEventListener("abort", () => reject(new ScrapeError("CANCELLED", "stopped"))),
+				),
+		);
+		const id = manager.start("user1").data!.id;
+
+		manager.stop(id);
+		await flush();
+
+		expect(manager.get(id).data?.status).toBe("cancelled");
+	});
+
 	it("records the error code when the scraper fails", async () => {
 		const manager = new ScrapeJobManager(async () => {
 			throw new ScrapeError("LIST_NOT_VISIBLE", "private");

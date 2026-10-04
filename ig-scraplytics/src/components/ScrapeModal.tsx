@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
 
 import { useUserManager } from "../context/UserContext";
-import { getScrapeJob, startScrape } from "../api/instagramServer";
+import { getScrapeJob, startScrape, stopScrape } from "../api/instagramServer";
 import { ScrapeJob } from "../types/types";
 import "../styles/modal.css";
 import "../styles/switcherModal.css";
@@ -32,8 +32,7 @@ function saveLastUsername(username: string) {
 }
 
 function describeProgress(job: ScrapeJob): string {
-	const { phase, fetched, total, message } = job.progress;
-	if (message) return message;
+	const { phase, fetched, total } = job.progress;
 
 	switch (phase) {
 		case "starting":
@@ -55,6 +54,7 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 	const [sessionId, setSessionId] = useState<string>("");
 	const [job, setJob] = useState<ScrapeJob | undefined>();
 	const [requestError, setRequestError] = useState<string | undefined>();
+	const [stopping, setStopping] = useState(false);
 
 	const running = job?.status === "running";
 
@@ -99,7 +99,19 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 
 		saveLastUsername(inputText);
 		setSessionId("");
+		setStopping(false);
 		setJob(data);
+	};
+
+	const stop = async () => {
+		if (!job || stopping) return;
+		setStopping(true);
+
+		const { error } = await stopScrape(job.id);
+		if (error) {
+			setRequestError(`Could not stop the scrape: ${error.message}`);
+			setStopping(false);
+		}
 	};
 
 	const progressPercent =
@@ -162,10 +174,16 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 
 								{job.status === "running" && (
 									<>
-										<p>{describeProgress(job)}</p>
+										<p>{stopping ? "Stopping..." : describeProgress(job)}</p>
+										{job.progress.message && !stopping && (
+											<p className="info">{job.progress.message}</p>
+										)}
 										<div className="progress-track">
 											<div className="progress-fill" style={{ width: `${progressPercent}%` }} />
 										</div>
+										<button className="stop-button" disabled={stopping} onClick={() => stop()}>
+											Stop
+										</button>
 									</>
 								)}
 
@@ -175,6 +193,8 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 										{job.summary?.following ?? 0} following. The panels now show this account.
 									</p>
 								)}
+
+								{job.status === "cancelled" && <p>{job.error?.message}</p>}
 
 								{job.status === "error" && <p className="error">{job.error?.message}</p>}
 							</div>

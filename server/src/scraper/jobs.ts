@@ -4,7 +4,7 @@ import { QueryResponse } from "../types";
 import { assertValidSessionId, assertValidUsername, ScrapeError } from "./errors";
 import { scrapeAccount, ScrapeOptions, ScrapeProgress, ScrapeSummary } from "./scrapeAccount";
 
-export type ScrapeJobStatus = "running" | "done" | "error";
+export type ScrapeJobStatus = "running" | "done" | "error" | "cancelled";
 
 export interface ScrapeJob {
 	id: string;
@@ -22,6 +22,7 @@ type Scraper = (options: ScrapeOptions) => Promise<ScrapeSummary>;
 // Runs one scrape at a time, because every run shares the same browser profile.
 export class ScrapeJobManager {
 	private readonly jobs = new Map<string, ScrapeJob>();
+	private readonly controllers = new Map<string, AbortController>();
 	private readonly scraper: Scraper;
 
 	constructor(scraper: Scraper = scrapeAccount) {
@@ -53,10 +54,14 @@ export class ScrapeJobManager {
 		};
 		this.jobs.set(job.id, job);
 
+		const controller = new AbortController();
+		this.controllers.set(job.id, controller);
+
 		this.scraper({
 			username,
 			lists: ["followers", "following"],
 			sessionId,
+			signal: controller.signal,
 			onProgress: (progress) => (job.progress = progress),
 		})
 			.then((summary) => {
@@ -64,6 +69,12 @@ export class ScrapeJobManager {
 				job.summary = summary;
 			})
 			.catch((error: unknown) => {
+				if (error instanceof ScrapeError && error.code === "CANCELLED") {
+					job.status = "cancelled";
+					job.error = { code: error.code, message: error.message };
+					return;
+				}
+
 				console.error(`\nScrape job ${job.id} for ${username} failed:`, error);
 				job.status = "error";
 				job.error =
@@ -71,8 +82,20 @@ export class ScrapeJobManager {
 						? { code: error.code, message: error.message }
 						: { code: "UNEXPECTED", message: "The scraper crashed. Check the server log." };
 			})
-			.finally(() => (job.finishedAt = new Date().toISOString()));
+			.finally(() => {
+				job.finishedAt = new Date().toISOString();
+				this.controllers.delete(job.id);
+			});
 
+		return { data: job, error: undefined };
+	}
+
+	// The job stays "running" until the scraper has closed the browser, then becomes "cancelled".
+	stop(id: string): QueryResponse<ScrapeJob> {
+		const job = this.jobs.get(id);
+		if (!job) return { data: undefined, error: { status: 404, message: `No scrape job with id ${id}.` } };
+
+		this.controllers.get(id)?.abort();
 		return { data: job, error: undefined };
 	}
 

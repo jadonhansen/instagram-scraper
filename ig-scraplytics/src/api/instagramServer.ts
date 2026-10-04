@@ -166,6 +166,20 @@ export async function getScrapeJob(id: string): Promise<ApiResponse<ScrapeJob, E
 	}
 }
 
+export async function stopScrape(id: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape/${encodeURIComponent(id)}/stop`, postFetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("stopScrape()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("stopScrape()", res);
+		const error = new Error((await res.text()) || res.statusText);
+		return { data: undefined, error };
+	}
+}
+
 export async function testServer(): Promise<ApiResponse<string[], Error>> {
 	const res = await fetch(`${baseUrl}/`, getFetchOptions);
 
