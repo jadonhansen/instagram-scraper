@@ -25,10 +25,13 @@ const FollowersModal: FunctionComponent<Props> = ({
 	const [followingSearchResults, setFingSearchResults] = useState<string[] | undefined>(undefined);
 
 	const listOfFollowers = (list: UserPostRelationship[]): ReactNode => {
+		// without any post likes every follower has 0, which means "no data", not "all ghosts"
+		const hasPostLikes = list.some((item) => item.numberOfPostsLiked > 0);
+
 		const arr: ReactNode[] = list.map((item, i) => {
 			return (
 				<div key={item.user + i}>
-					{item.numberOfPostsLiked == 0 && list[i - 1].numberOfPostsLiked !== 0 && (
+					{hasPostLikes && item.numberOfPostsLiked == 0 && list[i - 1].numberOfPostsLiked !== 0 && (
 						<p className="ghost-followers-info">These are ghost followers</p>
 					)}
 					<p
