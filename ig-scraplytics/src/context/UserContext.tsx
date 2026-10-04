@@ -28,6 +28,24 @@ export function useUserManager() {
 	return useContext(UserManager);
 }
 
+const selectedUserKey = "selectedUser";
+
+function readStoredUser(): string | undefined {
+	try {
+		return localStorage.getItem(selectedUserKey) ?? undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function storeUser(user: string) {
+	try {
+		localStorage.setItem(selectedUserKey, user);
+	} catch {
+		// storage blocked (private window): the selection just won't survive a refresh
+	}
+}
+
 type Props = {
 	children?: ReactNode;
 };
@@ -52,8 +70,17 @@ export function UserProvider({ children }: Props) {
 				return;
 			}
 			setUsers(data);
+
+			// restored only once the server confirms the account still has a db folder
+			const storedUser = readStoredUser();
+			if (storedUser && data.includes(storedUser)) setSelectedUser(storedUser);
 		}
 	};
+
+	function selectUser(user: string) {
+		setSelectedUser(user);
+		storeUser(user);
+	}
 
 	function addUser(user: string) {
 		const temp = users ? [...users] : [];
@@ -76,7 +103,7 @@ export function UserProvider({ children }: Props) {
 				dataVersion: dataVersion,
 				addUser: addUser,
 				refreshData: refreshData,
-				setSelectedUser: setSelectedUser,
+				setSelectedUser: selectUser,
 			}}
 		>
 			{children}
