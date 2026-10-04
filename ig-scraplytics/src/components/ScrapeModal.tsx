@@ -6,6 +6,7 @@ import { ScrapeJob } from "../types/types";
 import "../styles/modal.css";
 import "../styles/switcherModal.css";
 import "../styles/scrapeModal.css";
+import { useCloseOnEscape } from "../hooks/useCloseOnEscape";
 
 const lastUsernameKey = "lastScrapeUsername";
 const pollIntervalMs = 2000;
@@ -47,6 +48,7 @@ function describeProgress(job: ScrapeJob): string {
 }
 
 const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
+	useCloseOnEscape(modalOpen, closeModal);
 	const { users, selectedUser, addUser, setSelectedUser, refreshData } = useUserManager();
 
 	const [inputText, setInputText] = useState<string>(readLastUsername);
@@ -119,7 +121,11 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 
 	return (
 		modalOpen && (
-			<div className="modal-container">
+			<div
+				className="modal-container"
+				// clicks on the dimmed backdrop close the modal; clicks inside the panel do not
+				onClick={(e) => e.target === e.currentTarget && closeModal()}
+			>
 				<div className="modal">
 					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;

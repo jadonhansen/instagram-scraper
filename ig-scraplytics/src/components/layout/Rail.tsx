@@ -18,9 +18,7 @@ const Rail: FunctionComponent<Props> = ({ onOpenAccounts, onOpenScrape, onOpenFo
 	return (
 		<nav className="rail" aria-label="Main">
 			<div className="brand">
-				<span className="brand-mark" aria-hidden="true">
-					IG
-				</span>
+				<img className="brand-mark" src="/app-icon.svg" alt="IG Scraplytics" width={44} height={44} />
 				<span className="brand-text">
 					<span className="brand-name">Scraplytics</span>
 					<span className="brand-sub">Dashboard</span>

@@ -3,6 +3,7 @@ import { UserPostRelationship } from "../types/types";
 import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 import SearchFeature from "./SearchFeature";
+import { useCloseOnEscape } from "../hooks/useCloseOnEscape";
 
 interface Props {
 	modalOpen: boolean;
@@ -21,6 +22,7 @@ const FollowersModal: FunctionComponent<Props> = ({
 	followingServerError,
 	closeModal,
 }) => {
+	useCloseOnEscape(modalOpen, closeModal);
 	const { selectedUser } = useUserManager();
 	const [followingSearchResults, setFingSearchResults] = useState<string[] | undefined>(undefined);
 
@@ -90,7 +92,11 @@ const FollowersModal: FunctionComponent<Props> = ({
 
 	return (
 		modalOpen && (
-			<div className="modal-container">
+			<div
+				className="modal-container"
+				// clicks on the dimmed backdrop close the modal; clicks inside the panel do not
+				onClick={(e) => e.target === e.currentTarget && closeModal()}
+			>
 				<div className="modal">
 					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;

@@ -5,21 +5,26 @@ interface UserContext {
 	selectedUser: string | undefined;
 	users: string[] | undefined;
 	serverError: Error | undefined;
+	// false until the first users request settles, so the stored selection can be restored without a flash
+	loaded: boolean;
 	// bumped after a scrape rewrites the selected user's files, so panels refetch
 	dataVersion: number;
 	addUser(user: string): void;
 	refreshData(): void;
 	setSelectedUser(user: string): void;
+	clearSelectedUser(): void;
 }
 
 const context: UserContext = {
 	selectedUser: undefined,
 	users: undefined,
 	serverError: undefined,
+	loaded: false,
 	dataVersion: 0,
 	addUser: () => {},
 	refreshData: () => {},
 	setSelectedUser: () => {},
+	clearSelectedUser: () => {},
 };
 
 const UserManager = React.createContext(context);
@@ -35,6 +40,14 @@ function readStoredUser(): string | undefined {
 		return localStorage.getItem(selectedUserKey) ?? undefined;
 	} catch {
 		return undefined;
+	}
+}
+
+function forgetStoredUser() {
+	try {
+		localStorage.removeItem(selectedUserKey);
+	} catch {
+		// storage blocked: nothing was stored
 	}
 }
 
@@ -55,13 +68,18 @@ export function UserProvider({ children }: Props) {
 	const [users, setUsers] = useState<string[] | undefined>();
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
 	const [dataVersion, setDataVersion] = useState(0);
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		getUsers();
 	}, []);
 
 	const getUsers = async () => {
-		const { data, error } = await getInstagramUsers();
+		const { data, error } = await getInstagramUsers().catch((error: unknown) => ({
+			data: undefined,
+			error: error instanceof Error ? error : new Error(String(error)),
+		}));
+		setLoaded(true);
 
 		if (error) setServerError(error);
 		else {
@@ -82,6 +100,11 @@ export function UserProvider({ children }: Props) {
 		storeUser(user);
 	}
 
+	function clearSelectedUser() {
+		setSelectedUser(undefined);
+		forgetStoredUser();
+	}
+
 	function addUser(user: string) {
 		const temp = users ? [...users] : [];
 		temp.push(user);
@@ -100,10 +123,12 @@ export function UserProvider({ children }: Props) {
 				selectedUser: selectedUser,
 				users: users,
 				serverError: serverError,
+				loaded: loaded,
 				dataVersion: dataVersion,
 				addUser: addUser,
 				refreshData: refreshData,
 				setSelectedUser: selectUser,
+				clearSelectedUser: clearSelectedUser,
 			}}
 		>
 			{children}

@@ -5,6 +5,7 @@ import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 import "../styles/switcherModal.css";
 import { addInstagramUser } from "../api/instagramServer";
+import { useCloseOnEscape } from "../hooks/useCloseOnEscape";
 
 interface Props {
 	modalOpen: boolean;
@@ -12,7 +13,13 @@ interface Props {
 }
 
 const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
-	const { users, selectedUser, serverError, setSelectedUser, addUser } = useUserManager();
+	useCloseOnEscape(modalOpen, closeModal);
+	const { users, selectedUser, serverError, setSelectedUser, clearSelectedUser, addUser } = useUserManager();
+
+	const logout = () => {
+		clearSelectedUser();
+		closeModal();
+	};
 
 	const [inputText, setInputText] = useState<string>("");
 	const [inputError, setInputError] = useState<string | undefined>();
@@ -39,7 +46,7 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 
 				if (data) {
 					addUser(inputText);
-					setInputText("");
+					selectUser(inputText);
 				}
 
 				if (error) {
@@ -53,7 +60,11 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 
 	return (
 		modalOpen && (
-			<div className="modal-container">
+			<div
+				className="modal-container"
+				// clicks on the dimmed backdrop close the modal; clicks inside the panel do not
+				onClick={(e) => e.target === e.currentTarget && closeModal()}
+			>
 				<div className="modal">
 					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;
@@ -83,17 +94,29 @@ const UserSwitcherModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) 
 							<p className="error">{serverError.message}</p>
 						) : users && users.length > 0 ? (
 							users.map((user: string, i: number) => {
+								const selected = selectedUser === user;
 								return (
-									<button
-										type="button"
-										key={i}
-										className={selectedUser === user ? "selected-username" : "username"}
-										aria-current={selectedUser === user ? "true" : undefined}
-										onClick={() => selectUser(user)}
-									>
-										<FaUser />
-										{user}
-									</button>
+									<div key={i} className="user-row">
+										<button
+											type="button"
+											className={selected ? "selected-username" : "username"}
+											aria-current={selected ? "true" : undefined}
+											onClick={() => selectUser(user)}
+										>
+											<FaUser />
+											{user}
+										</button>
+										{selected && (
+											<button
+												type="button"
+												className="logout-button"
+												aria-label={`Log out of ${user}`}
+												onClick={() => logout()}
+											>
+												Log out
+											</button>
+										)}
+									</div>
 								);
 							})
 						) : (

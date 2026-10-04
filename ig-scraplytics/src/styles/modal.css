@@ -86,7 +86,9 @@
 			}
 		}
 
-		.username:nth-child(odd) {
+		/* followers rows are each wrapped in a div (for the ghost divider), so stripe by the wrapper */
+		.list > .username:nth-child(odd),
+		.list > div:nth-child(odd) > .username {
 			background-color: rgba(255, 255, 255, 0.03);
 		}
 

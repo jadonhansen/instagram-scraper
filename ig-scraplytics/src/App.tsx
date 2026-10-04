@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FaPlus, FaUserGroup } from "react-icons/fa6";
 
 import Rail from "./components/layout/Rail.tsx";
+import Landing from "./components/landing/Landing.tsx";
 import FollowersCard from "./components/dashboard/FollowersCard.tsx";
 import FollowingCard from "./components/dashboard/FollowingCard.tsx";
 import FansCard from "./components/dashboard/FansCard.tsx";
@@ -17,12 +17,23 @@ import "./styles/layout.css";
 import "./styles/cards.css";
 
 function Dashboard() {
-	const { selectedUser, users } = useUserManager();
+	const { selectedUser, loaded } = useUserManager();
 	const stats = useAccountStats();
 
 	const [accountsOpen, setAccountsOpen] = useState(false);
 	const [scrapeOpen, setScrapeOpen] = useState(false);
 	const [followersOpen, setFollowersOpen] = useState(false);
+
+	if (!loaded) return null;
+
+	if (!selectedUser) {
+		return (
+			<>
+				<UserSwitcherModal modalOpen={accountsOpen} closeModal={() => setAccountsOpen(false)} />
+				<Landing onAddAccount={() => setAccountsOpen(true)} />
+			</>
+		);
+	}
 
 	return (
 		<div className="app-shell">
@@ -46,32 +57,17 @@ function Dashboard() {
 			<div className="main">
 				<header className="topbar">
 					<div className="greeting">
-						<h1>{selectedUser ? `Hey, ${selectedUser}` : "Hey there"}</h1>
-						<p>
-							{selectedUser
-								? "Who follows you, who engages, and who never followed back."
-								: users
-									? "Pick an account to see its stats."
-									: "Scrape an account to get started."}
-						</p>
+						<h1>Hey, {selectedUser}</h1>
+						<p>Who follows you, who engages, and who never followed back.</p>
 					</div>
 
 					<div className="topbar-actions">
-						<button
-							type="button"
-							className="icon-button"
-							aria-label="Scrape an account"
-							title="Scrape an account"
-							onClick={() => setScrapeOpen(true)}
-						>
-							<FaPlus />
-						</button>
 						<button type="button" className="account-pill" onClick={() => setAccountsOpen(true)}>
 							<span className="avatar" aria-hidden="true">
-								{selectedUser ? selectedUser[0].toUpperCase() : <FaUserGroup />}
+								{selectedUser[0].toUpperCase()}
 							</span>
 							<span className="account-text">
-								<span className="account-name">{selectedUser ?? "No account"}</span>
+								<span className="account-name">{selectedUser}</span>
 								<span className="account-sub">Switch account</span>
 							</span>
 						</button>
@@ -84,40 +80,27 @@ function Dashboard() {
 					</button>
 				</div>
 
-				{selectedUser ? (
-					<main className="dashboard-grid">
-						<FollowersCard followers={stats.followers} onOpenList={() => setFollowersOpen(true)} />
-						<FollowingCard
-							following={stats.following}
-							unfollowers={stats.unfollowers}
-							onOpenList={() => setFollowersOpen(true)}
-						/>
-						<FansCard fans={stats.fans} />
-						<ScoreGauge followers={stats.followers} />
-						<UserListCard
-							title="Ghost followers"
-							description="Follow you but never liked a scraped post."
-							users={stats.ghosts}
-							noDataMessage="No data. There are no post likes for this account yet, so ghost followers cannot be worked out."
-						/>
-						<UserListCard
-							title="Unfollowers"
-							description="You follow them, they don't follow you back."
-							users={stats.unfollowers}
-						/>
-					</main>
-				) : (
-					<main className="empty-state">
-						<p>{users ? "No account selected." : "No accounts yet."}</p>
-						<button
-							type="button"
-							className="button button-primary"
-							onClick={() => (users ? setAccountsOpen(true) : setScrapeOpen(true))}
-						>
-							{users ? "Choose an account" : "Scrape an account"}
-						</button>
-					</main>
-				)}
+				<main className="dashboard-grid">
+					<FollowersCard followers={stats.followers} onOpenList={() => setFollowersOpen(true)} />
+					<FollowingCard
+						following={stats.following}
+						unfollowers={stats.unfollowers}
+						onOpenList={() => setFollowersOpen(true)}
+					/>
+					<FansCard fans={stats.fans} />
+					<ScoreGauge followers={stats.followers} />
+					<UserListCard
+						title="Ghost followers"
+						description="Follow you but never liked a scraped post."
+						users={stats.ghosts}
+						noDataMessage="No data. There are no post likes for this account yet, so ghost followers cannot be worked out."
+					/>
+					<UserListCard
+						title="Unfollowers"
+						description="You follow them, they don't follow you back."
+						users={stats.unfollowers}
+					/>
+				</main>
 			</div>
 		</div>
 	);
