@@ -12,8 +12,9 @@ const __dirname = path.dirname(__filename);
 export const sessionDir = path.join(__dirname, "../../.ig-session");
 
 const instagramOrigin = "https://www.instagram.com";
-// The public app id the Instagram web client sends with its own API calls.
+// Header values the Instagram web client sends with its own API calls.
 const instagramWebAppId = "936619743392459";
+const instagramAsbdId = "129477";
 const loginPollMs = 2000;
 
 export interface Session {
@@ -23,7 +24,14 @@ export interface Session {
 
 export async function openSession(headless: boolean): Promise<Session> {
 	// channel "chrome" drives the installed Google Chrome, so no Playwright browser download is needed
-	const context = await chromium.launchPersistentContext(sessionDir, { channel: "chrome", headless, viewport: null });
+	const context = await chromium.launchPersistentContext(sessionDir, {
+		channel: "chrome",
+		headless,
+		viewport: null,
+		// without these Chrome reports navigator.webdriver = true, which sites use to flag automated clients
+		ignoreDefaultArgs: ["--enable-automation"],
+		args: ["--disable-blink-features=AutomationControlled"],
+	});
 	const page = context.pages()[0] ?? (await context.newPage());
 	return { context, page };
 }
@@ -102,7 +110,7 @@ export function createPageFetcher(page: Page): PageFetcher {
 		if (page.isClosed()) throw new ScrapeError("BROWSER_CLOSED", "The scraper browser window was closed.");
 
 		return page.evaluate(
-			async ({ url, appId }) => {
+			async ({ url, appId, asbdId }) => {
 				const csrf = document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? "";
 				// the web app stores this claim after login and sends it on every API call
 				const claim = sessionStorage.getItem("www-claim-v2") ?? "0";
@@ -110,6 +118,7 @@ export function createPageFetcher(page: Page): PageFetcher {
 					credentials: "include",
 					headers: {
 						"X-IG-App-ID": appId,
+						"X-ASBD-ID": asbdId,
 						"X-IG-WWW-Claim": claim,
 						"X-Requested-With": "XMLHttpRequest",
 						"X-CSRFToken": csrf,
@@ -117,7 +126,7 @@ export function createPageFetcher(page: Page): PageFetcher {
 				});
 				return { status: res.status, body: await res.text() };
 			},
-			{ url: instagramOrigin + requestPath, appId: instagramWebAppId },
+			{ url: instagramOrigin + requestPath, appId: instagramWebAppId, asbdId: instagramAsbdId },
 		);
 	};
 }
