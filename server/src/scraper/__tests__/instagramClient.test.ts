@@ -112,6 +112,6 @@ describe("InstagramClient", () => {
 		await client.getListPage("followers", "123", undefined);
 		await client.getListPage("followers", "123", undefined);
 
-		expect(waits).toEqual([2000]);
+		expect(waits).toEqual([5000]);
 	});
 });

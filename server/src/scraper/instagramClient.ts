@@ -25,8 +25,8 @@ export interface ClientOptions {
 }
 
 export const defaultClientOptions: ClientOptions = {
-	minDelayMs: 2000,
-	maxDelayMs: 5000,
+	minDelayMs: 5000,
+	maxDelayMs: 10_000,
 	rateLimitBackoffMs: [60_000, 120_000, 300_000, 600_000],
 	sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 	random: Math.random,

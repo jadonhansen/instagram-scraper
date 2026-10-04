@@ -14,4 +14,4 @@ Start a scrape from the Scrape button in the web UI, or from the command line:
 cd server && npm run scrape -- <username>
 ```
 
-Scraping uses the Instagram web app's own endpoints and breaks Instagram's terms of use. Requests are spaced 2 to 5 seconds apart to keep volume close to manual browsing. Followers and following lists are only visible for public accounts and private accounts you follow.
+Scraping uses the Instagram web app's own endpoints and breaks Instagram's terms of use. Requests are spaced 5 to 10 seconds apart to keep volume close to manual browsing. Followers and following lists are only visible for public accounts and private accounts you follow.
