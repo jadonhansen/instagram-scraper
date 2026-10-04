@@ -1,4 +1,4 @@
-import { ApiResponse, UserPostRelationship } from "../types/types";
+import { ApiResponse, ScrapeJob, UserPostRelationship } from "../types/types";
 
 const baseUrl = "http://localhost:3000";
 const isDebug = false;
@@ -49,7 +49,8 @@ export async function addInstagramUser(user: string): Promise<ApiResponse<string
 	}
 }
 
-export async function getGhostFollowers(user: string): Promise<ApiResponse<string[], Error>> {
+// data is null when the user has no post likes data, so ghosts cannot be worked out
+export async function getGhostFollowers(user: string): Promise<ApiResponse<string[] | null, Error>> {
 	const res = await fetch(`${baseUrl}/ghost_followers`, {
 		...postFetchOptions,
 		body: JSON.stringify({ user: user }),
@@ -130,6 +131,52 @@ export async function getFollowing(user: string): Promise<ApiResponse<string[], 
 	} else {
 		if (isDebug) console.error("getFollowing()", res);
 		const error = new Error(res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function startScrape(user: string, sessionId?: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user, sessionId: sessionId }),
+	});
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("startScrape()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("startScrape()", res);
+		// the server explains why it refused (invalid username, scrape already running) in the body
+		const error = new Error((await res.text()) || res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function getScrapeJob(id: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape/${encodeURIComponent(id)}`, getFetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("getScrapeJob()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("getScrapeJob()", res);
+		const error = new Error((await res.text()) || res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function stopScrape(id: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape/${encodeURIComponent(id)}/stop`, postFetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("stopScrape()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("stopScrape()", res);
+		const error = new Error((await res.text()) || res.statusText);
 		return { data: undefined, error };
 	}
 }

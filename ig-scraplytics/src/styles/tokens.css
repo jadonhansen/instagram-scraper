@@ -1,0 +1,72 @@
+/* Design tokens. Components reference these variables, never raw values. */
+:root {
+	/* colour */
+	--color-bg: #0d0b09;
+	--color-bg-warm: #2a160b;
+	--color-surface: rgba(38, 33, 29, 0.62);
+	--color-surface-strong: rgba(52, 45, 39, 0.82);
+	--color-surface-hover: rgba(66, 57, 50, 0.7);
+	--color-border: rgba(255, 255, 255, 0.09);
+	--color-border-strong: rgba(255, 255, 255, 0.18);
+	--color-text: #f5f1ed;
+	--color-text-muted: rgba(245, 241, 237, 0.62);
+	--color-text-faint: rgba(245, 241, 237, 0.42);
+	--color-accent: #ff6b2c;
+	--color-accent-hover: #ff8450;
+	--color-accent-soft: rgba(255, 107, 44, 0.16);
+	--color-amber: #f6b53a;
+	--color-track: rgba(255, 255, 255, 0.1);
+	--color-danger: #ef5a4f;
+	--color-danger-hover: #f37168;
+	--color-warning: #f6b53a;
+	--color-focus: #ffb38f;
+
+	/* spacing */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-8: 32px;
+	--space-10: 40px;
+	--space-12: 48px;
+
+	/* radius */
+	--radius-sm: 8px;
+	--radius-md: 14px;
+	--radius-lg: 22px;
+	--radius-pill: 999px;
+
+	/* elevation */
+	--shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+	--shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.55);
+	--blur-glass: 18px;
+
+	/* typography */
+	--font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+	--text-xs: 12px;
+	--text-sm: 13px;
+	--text-md: 15px;
+	--text-lg: 18px;
+	--text-xl: 24px;
+	--text-2xl: 34px;
+	--text-3xl: 44px;
+	--weight-regular: 400;
+	--weight-medium: 500;
+	--weight-semibold: 600;
+
+	/* motion */
+	--duration-fast: 120ms;
+	--duration-base: 220ms;
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+	/* layers */
+	--z-rail: 10;
+	--z-modal: 100;
+
+	/* breakpoints (reference only; media queries cannot read variables) */
+	--bp-tablet: 1100px;
+	--bp-phone: 700px;
+}

@@ -1,0 +1,231 @@
+.app-shell {
+	display: grid;
+	grid-template-columns: 88px minmax(0, 1fr);
+	min-height: 100vh;
+}
+
+/* icon rail */
+.rail {
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	z-index: var(--z-rail);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-8);
+	padding: var(--space-6) 0;
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+}
+
+.brand-mark {
+	display: block;
+	width: 44px;
+	height: 44px;
+}
+
+/* the name sits in the topbar area on wide screens, so the rail shows only the mark */
+.brand-text {
+	display: none;
+}
+
+.rail-items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+
+.rail-button {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: 1px solid var(--color-border-strong);
+	background-color: var(--color-surface);
+	backdrop-filter: blur(var(--blur-glass));
+	color: var(--color-text);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.rail-button:hover {
+	background-color: var(--color-surface-hover);
+}
+
+.rail-button-active {
+	background-color: var(--color-text);
+	border-color: var(--color-text);
+	color: var(--color-bg);
+}
+
+.rail-button-active:hover {
+	background-color: var(--color-text);
+}
+
+/* main column */
+.main {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-6);
+	padding: var(--space-6) var(--space-8) var(--space-10) var(--space-2);
+	min-width: 0;
+}
+
+.topbar {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: start;
+	gap: var(--space-4);
+}
+
+.greeting {
+	grid-column: 2;
+	text-align: center;
+	padding-top: var(--space-2);
+}
+
+.greeting h1 {
+	font-size: var(--text-xl);
+	font-weight: var(--weight-semibold);
+}
+
+.greeting p {
+	margin-top: var(--space-3);
+	font-size: var(--text-2xl);
+	font-weight: var(--weight-regular);
+	color: var(--color-text-muted);
+	line-height: 1.2;
+	max-width: 22ch;
+}
+
+.topbar-actions {
+	grid-column: 3;
+	justify-self: end;
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+}
+
+.account-pill {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	min-height: 44px;
+	padding: var(--space-1) var(--space-4) var(--space-1) var(--space-1);
+	border-radius: var(--radius-pill);
+	border: 1px solid transparent;
+	background: none;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.account-pill:hover {
+	border-color: var(--color-border-strong);
+}
+
+.avatar {
+	display: grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background-color: var(--color-surface-strong);
+	border: 1px solid var(--color-border-strong);
+	font-weight: var(--weight-semibold);
+}
+
+.account-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.account-name {
+	font-size: var(--text-sm);
+	font-weight: var(--weight-semibold);
+}
+
+.account-sub {
+	font-size: var(--text-xs);
+	color: var(--color-text-muted);
+}
+
+.toolbar {
+	display: flex;
+	justify-content: center;
+	gap: var(--space-3);
+	margin-top: var(--space-12);
+}
+
+@media (max-width: 1100px) {
+	.topbar {
+		grid-template-columns: 1fr auto;
+	}
+
+	.greeting {
+		grid-column: 1;
+		text-align: left;
+	}
+
+	.topbar-actions {
+		grid-column: 2;
+	}
+
+	.toolbar {
+		margin-top: 0;
+	}
+}
+
+@media (max-width: 700px) {
+	.app-shell {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.rail {
+		position: static;
+		height: auto;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: var(--space-4);
+	}
+
+	.rail-items {
+		flex-direction: row;
+	}
+
+	.main {
+		padding: 0 var(--space-4) var(--space-8);
+	}
+
+	.topbar {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.topbar-actions {
+		grid-column: 1;
+		grid-row: 1;
+		justify-self: stretch;
+		justify-content: space-between;
+	}
+
+	.greeting {
+		grid-column: 1;
+	}
+
+	.greeting p {
+		font-size: var(--text-xl);
+	}
+
+	.toolbar .button {
+		flex: 1;
+	}
+}

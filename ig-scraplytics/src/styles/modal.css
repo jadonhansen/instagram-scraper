@@ -1,60 +1,133 @@
 .modal-container {
-	display: block;
 	position: fixed;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	overflow: auto;
-	background-color: rgb(0, 0, 0);
-	background-color: rgba(0, 0, 0, 0.5);
+	inset: 0;
+	z-index: var(--z-modal);
+	display: grid;
+	place-items: center;
+	padding: var(--space-6);
+	background-color: rgba(8, 6, 4, 0.6);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
 
 	.modal {
-		height: 70%;
-		width: 60%;
-		margin: 5% auto;
-		padding: 2rem;
-		border-radius: 20px;
-		background-color: #2e2e2e;
-		overflow: scroll;
+		position: relative;
+		width: min(760px, 100%);
+		max-height: min(80vh, 760px);
+		overflow-y: auto;
+		padding: var(--space-8);
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-border-strong);
+		background-color: var(--color-surface-strong);
+		backdrop-filter: blur(var(--blur-glass));
+		-webkit-backdrop-filter: blur(var(--blur-glass));
+		box-shadow: var(--shadow-modal);
 
 		.close {
-			color: #aaa;
-			float: right;
-			font-size: 28px;
-			position: relative;
-			z-index: 100;
-			line-height: 0.55;
-		}
-
-		.close:hover,
-		.close:focus {
-			color: #7a7a7a;
-			text-decoration: none;
+			position: absolute;
+			top: var(--space-4);
+			right: var(--space-4);
+			display: grid;
+			place-items: center;
+			width: 44px;
+			height: 44px;
+			border-radius: 50%;
+			border: 1px solid var(--color-border);
+			background: none;
+			color: var(--color-text-muted);
+			font-size: 24px;
+			line-height: 1;
 			cursor: pointer;
 		}
 
-		/* followers modal */
+		.close:hover {
+			color: var(--color-text);
+			background-color: var(--color-surface-hover);
+		}
+
+		h4 {
+			font-size: var(--text-xl);
+			font-weight: var(--weight-medium);
+		}
+
+		.info {
+			margin-top: var(--space-2);
+			margin-bottom: var(--space-6);
+			font-size: var(--text-sm);
+			color: var(--color-text-muted);
+		}
+
+		.sub-heading {
+			margin-bottom: var(--space-2);
+			font-size: var(--text-sm);
+			font-weight: var(--weight-semibold);
+		}
+
+		.error {
+			margin-top: var(--space-2);
+		}
+
+		.list {
+			margin-top: var(--space-4);
+		}
+
+		.username,
+		.selected-username {
+			display: flex;
+			align-items: center;
+			gap: var(--space-2);
+			margin: 0;
+			padding: var(--space-2) var(--space-3);
+			border-radius: var(--radius-sm);
+			font-size: var(--text-sm);
+
+			svg {
+				font-size: var(--text-xs);
+				color: var(--color-text-faint);
+			}
+		}
+
+		/* followers rows are each wrapped in a div (for the ghost divider), so stripe by the wrapper */
+		.list > .username:nth-child(odd),
+		.list > div:nth-child(odd) > .username {
+			background-color: rgba(255, 255, 255, 0.03);
+		}
+
+		/* followers modal: two scrolling columns */
 		.grid {
 			display: grid;
-			height: 100%;
-			column-gap: 2rem;
-			grid-template-columns: 50% 50%;
-			padding-top: 2rem;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: var(--space-8);
+			padding-top: var(--space-4);
 
 			.col {
-				overflow: scroll;
+				min-width: 0;
+				max-height: 60vh;
+				overflow-y: auto;
+			}
 
-				.mb {
-					margin-top: 2rem;
-				}
+			.mb {
+				margin-top: var(--space-4);
+			}
 
-				.ghost-followers-info {
-					margin-top: 2rem;
-					font-weight: 600;
-					font-size: 18px;
-				}
+			.ghost-followers-info {
+				margin-top: var(--space-6);
+				margin-bottom: var(--space-2);
+				font-weight: var(--weight-semibold);
+				color: var(--color-accent-hover);
+			}
+		}
+	}
+}
+
+@media (max-width: 700px) {
+	.modal-container {
+		padding: var(--space-4);
+
+		.modal {
+			padding: var(--space-6) var(--space-4);
+
+			.grid {
+				grid-template-columns: minmax(0, 1fr);
 			}
 		}
 	}

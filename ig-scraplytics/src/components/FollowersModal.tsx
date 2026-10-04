@@ -3,6 +3,7 @@ import { UserPostRelationship } from "../types/types";
 import { useUserManager } from "../context/UserContext";
 import "../styles/modal.css";
 import SearchFeature from "./SearchFeature";
+import { useCloseOnEscape } from "../hooks/useCloseOnEscape";
 
 interface Props {
 	modalOpen: boolean;
@@ -21,14 +22,18 @@ const FollowersModal: FunctionComponent<Props> = ({
 	followingServerError,
 	closeModal,
 }) => {
+	useCloseOnEscape(modalOpen, closeModal);
 	const { selectedUser } = useUserManager();
 	const [followingSearchResults, setFingSearchResults] = useState<string[] | undefined>(undefined);
 
 	const listOfFollowers = (list: UserPostRelationship[]): ReactNode => {
+		// without any post likes every follower has 0, which means "no data", not "all ghosts"
+		const hasPostLikes = list.some((item) => item.numberOfPostsLiked > 0);
+
 		const arr: ReactNode[] = list.map((item, i) => {
 			return (
 				<div key={item.user + i}>
-					{item.numberOfPostsLiked == 0 && list[i - 1].numberOfPostsLiked !== 0 && (
+					{hasPostLikes && item.numberOfPostsLiked == 0 && list[i - 1].numberOfPostsLiked !== 0 && (
 						<p className="ghost-followers-info">These are ghost followers</p>
 					)}
 					<p
@@ -87,11 +92,15 @@ const FollowersModal: FunctionComponent<Props> = ({
 
 	return (
 		modalOpen && (
-			<div className="modal-container">
+			<div
+				className="modal-container"
+				// clicks on the dimmed backdrop close the modal; clicks inside the panel do not
+				onClick={(e) => e.target === e.currentTarget && closeModal()}
+			>
 				<div className="modal">
-					<span onClick={() => closeModal()} className="close">
+					<button type="button" aria-label="Close" onClick={() => closeModal()} className="close">
 						&times;
-					</span>
+					</button>
 
 					<div className="grid">
 						<div className="col">

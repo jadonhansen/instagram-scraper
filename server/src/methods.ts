@@ -4,19 +4,15 @@ import { fileURLToPath } from "url";
 
 import { QueryResponse, UserPostRelationship } from "./types";
 import { queryDirectoryFolders, queryTextFile } from "./queries";
-
-const instagramUsersFolder = "../../db";
-const followersTxt = "followers.txt";
-const followingTxt = "following.txt";
-const postLikesTxt = "postLikes.txt";
+import { instagramUsersFolder, followersTxt, followingTxt, postLikesTxt } from "./db";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const isDebug = true;
 
-// find followers who do not like any of your posts
-export async function findGhostFollowers(user: string): Promise<QueryResponse<string[]>> {
+// find followers who do not like any of your posts; null when there is no post likes data to compare against
+export async function findGhostFollowers(user: string): Promise<QueryResponse<string[] | null>> {
 	const folderPath = instagramUsersFolder + "/" + user;
 
 	const followers = await queryTextFile(folderPath + "/" + followersTxt);
@@ -36,6 +32,11 @@ export async function findGhostFollowers(user: string): Promise<QueryResponse<st
 		console.log("\n\n--- findGhostFollowers() method ---");
 		console.log("Followers arr len: ", arrFollowers.length);
 		console.log("Post likes arr len: ", arrPostLikes.length);
+	}
+
+	if (arrPostLikes.every((liker) => liker.trim() === "")) {
+		if (isDebug) console.log("No post likes data, so ghost followers cannot be determined.");
+		return { data: null, error: undefined };
 	}
 
 	const uniquePostLikes = [...new Set(arrPostLikes)];
@@ -75,9 +76,9 @@ export async function findFans(user: string): Promise<QueryResponse<string[]>> {
 
 	const uniquePostLikes = [...new Set(arrPostLikes)];
 
-	// removes users who are followers
+	// removes users who are followers, and the blank line an empty postLikes.txt splits into
 	const fans = uniquePostLikes.filter((user) => {
-		return !arrFollowers.includes(user);
+		return user.trim() !== "" && !arrFollowers.includes(user);
 	});
 
 	if (isDebug) console.log("Number of fans: ", fans.length);
