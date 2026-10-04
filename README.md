@@ -2,6 +2,10 @@
 
 Scrapes your Instagram following, post likes &amp; more for stats. Node.js backend coupled with React frontend.
 
+![IG Scraplytics landing page](docs/screenshots/landing.png)
+
+![IG Scraplytics dashboard with followers, following, fans, ghost followers and unfollowers](docs/screenshots/dashboard.png)
+
 ## Scraping
 
 The scraper drives your installed Google Chrome with a separate profile. On the first run Chrome opens on the Instagram login page; log in there and the scrape continues. Later runs reuse that session.
