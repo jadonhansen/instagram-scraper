@@ -14,6 +14,12 @@ describe("ScrapeJobManager", () => {
 		expect(manager.start("../etc").error?.status).toBe(400);
 	});
 
+	it("rejects a session value that is not a sessionid cookie", () => {
+		const manager = new ScrapeJobManager(neverResolves);
+
+		expect(manager.start("user1", "not a cookie").error?.status).toBe(400);
+	});
+
 	it("refuses a second job while one is running", () => {
 		const manager = new ScrapeJobManager(neverResolves);
 		manager.start("user1");

@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 
 import { QueryResponse } from "../types";
-import { assertValidUsername, ScrapeError } from "./errors";
+import { assertValidSessionId, assertValidUsername, ScrapeError } from "./errors";
 import { scrapeAccount, ScrapeOptions, ScrapeProgress, ScrapeSummary } from "./scrapeAccount";
 
 export type ScrapeJobStatus = "running" | "done" | "error";
@@ -28,9 +28,10 @@ export class ScrapeJobManager {
 		this.scraper = scraper;
 	}
 
-	start(username: string): QueryResponse<ScrapeJob> {
+	start(username: string, sessionId?: string): QueryResponse<ScrapeJob> {
 		try {
 			assertValidUsername(username);
+			if (sessionId) assertValidSessionId(sessionId);
 		} catch (error) {
 			return { data: undefined, error: { status: 400, message: (error as Error).message } };
 		}
@@ -55,6 +56,7 @@ export class ScrapeJobManager {
 		this.scraper({
 			username,
 			lists: ["followers", "following"],
+			sessionId,
 			onProgress: (progress) => (job.progress = progress),
 		})
 			.then((summary) => {

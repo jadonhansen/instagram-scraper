@@ -131,7 +131,9 @@ app.post("/scrape", async (req, res) => {
 	const user = req.body.user;
 	if (!user) return res.status(500).send("Undefined user in request body.");
 
-	const { data, error } = scrapeJobs.start(user);
+	const sessionId = typeof req.body.sessionId === "string" ? req.body.sessionId.trim() : undefined;
+
+	const { data, error } = scrapeJobs.start(user, sessionId || undefined);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");

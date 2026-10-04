@@ -2,7 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { chromium, BrowserContext, Page } from "playwright-core";
 
-import { ScrapeError } from "./errors";
+import { assertValidSessionId, ScrapeError } from "./errors";
 import { PageFetcher } from "./instagramClient";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +31,35 @@ export async function openSession(headless: boolean): Promise<Session> {
 async function getCookie(context: BrowserContext, name: string): Promise<string | undefined> {
 	const cookies = await context.cookies(instagramOrigin);
 	return cookies.find((cookie) => cookie.name === name)?.value;
+}
+
+// Copies a session from another browser: the value of the instagram.com "sessionid" cookie.
+export async function importSessionCookie(context: BrowserContext, sessionId: string): Promise<void> {
+	const value = sessionId.trim();
+	assertValidSessionId(value);
+	const expires = Math.floor(Date.now() / 1000) + 90 * 24 * 60 * 60;
+
+	await context.addCookies([
+		{
+			name: "sessionid",
+			value,
+			domain: ".instagram.com",
+			path: "/",
+			secure: true,
+			httpOnly: true,
+			sameSite: "Lax",
+			expires,
+		},
+		{
+			name: "ds_user_id",
+			value: value.split("%3A")[0],
+			domain: ".instagram.com",
+			path: "/",
+			secure: true,
+			sameSite: "Lax",
+			expires,
+		},
+	]);
 }
 
 export async function getViewerId(context: BrowserContext): Promise<string | undefined> {

@@ -134,10 +134,10 @@ export async function getFollowing(user: string): Promise<ApiResponse<string[], 
 	}
 }
 
-export async function startScrape(user: string): Promise<ApiResponse<ScrapeJob, Error>> {
+export async function startScrape(user: string, sessionId?: string): Promise<ApiResponse<ScrapeJob, Error>> {
 	const res = await fetch(`${baseUrl}/scrape`, {
 		...postFetchOptions,
-		body: JSON.stringify({ user: user }),
+		body: JSON.stringify({ user: user, sessionId: sessionId }),
 	});
 
 	if (res.ok) {

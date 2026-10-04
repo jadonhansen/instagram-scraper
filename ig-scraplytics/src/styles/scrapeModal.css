@@ -6,6 +6,11 @@
 				opacity: 0.5;
 			}
 
+			.session-help {
+				max-width: 520px;
+				margin-bottom: 0.5rem;
+			}
+
 			.scrape-status {
 				p {
 					margin: 0.5rem 0;

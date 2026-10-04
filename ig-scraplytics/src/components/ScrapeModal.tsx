@@ -51,6 +51,8 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 	const { users, selectedUser, addUser, setSelectedUser, refreshData } = useUserManager();
 
 	const [inputText, setInputText] = useState<string>(readLastUsername);
+	// never persisted: it is a live Instagram login
+	const [sessionId, setSessionId] = useState<string>("");
 	const [job, setJob] = useState<ScrapeJob | undefined>();
 	const [requestError, setRequestError] = useState<string | undefined>();
 
@@ -88,7 +90,7 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 		if (running || !inputText) return;
 		setRequestError(undefined);
 
-		const { data, error } = await startScrape(inputText);
+		const { data, error } = await startScrape(inputText, sessionId || undefined);
 
 		if (error) {
 			setRequestError(error.message);
@@ -96,6 +98,7 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 		}
 
 		saveLastUsername(inputText);
+		setSessionId("");
 		setJob(data);
 	};
 
@@ -132,6 +135,25 @@ const ScrapeModal: FunctionComponent<Props> = ({ modalOpen, closeModal }) => {
 								Start
 							</button>
 							{requestError && <p className="error">{requestError}</p>}
+						</div>
+
+						<div className="add-user-section">
+							<p className="sub-heading">Session from your browser (optional)</p>
+							<p className="info session-help">
+								Skip the login window by reusing your normal browser&apos;s login. On instagram.com,
+								open DevTools, go to Application, then Cookies, then https://www.instagram.com, and copy
+								the value of <code>sessionid</code>. You only need this once, or again when the session
+								expires.
+							</p>
+							<input
+								className="search-input"
+								type="password"
+								autoComplete="off"
+								value={sessionId}
+								placeholder="sessionid cookie"
+								disabled={running}
+								onChange={(e) => setSessionId(e.target.value.trim())}
+							></input>
 						</div>
 
 						{job && (

@@ -2,7 +2,8 @@ import { ListKind } from "./instagramClient";
 import { ScrapeError } from "./errors";
 import { scrapeAccount } from "./scrapeAccount";
 
-const usage = "Usage: npm run scrape -- <username> [--only followers|following] [--headless]";
+const usage =
+	"Usage: [IG_SESSIONID=<sessionid cookie>] npm run scrape -- <username> [--only followers|following] [--headless]";
 
 function parseArgs(argv: string[]): { username: string; lists: ListKind[]; headless: boolean } {
 	const positional = argv.filter((arg, i) => !arg.startsWith("--") && argv[i - 1] !== "--only");
@@ -24,6 +25,7 @@ async function main() {
 
 	const summary = await scrapeAccount({
 		...args,
+		sessionId: process.env.IG_SESSIONID?.trim() || undefined,
 		onProgress: ({ phase, fetched, total, message }) => {
 			if (phase === "waiting_for_login") console.log("Log in to Instagram in the browser window to continue.");
 			else if (message) console.log(message);

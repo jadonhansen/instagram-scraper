@@ -71,6 +71,27 @@ export class InstagramClient {
 		};
 	}
 
+	// Profile by numeric id. Used for the logged-in account, which avoids web_profile_info and its tight rate limit.
+	async getUserInfo(userId: string): Promise<Profile> {
+		const json = await this.getJson(`/api/v1/users/${encodeURIComponent(userId)}/info/`, {
+			notFoundMessage: `Instagram user id ${userId} does not exist.`,
+		});
+
+		const user = json?.user;
+		if (!user || typeof user.username !== "string") {
+			throw new ScrapeError("UNEXPECTED_RESPONSE", `User info response for id ${userId} had no username.`);
+		}
+
+		return {
+			id: String(user.pk ?? user.pk_id ?? userId),
+			username: user.username,
+			isPrivate: Boolean(user.is_private),
+			followedByViewer: false,
+			followerCount: user.follower_count ?? 0,
+			followingCount: user.following_count ?? 0,
+		};
+	}
+
 	async getListPage(kind: ListKind, userId: string, maxId: string | undefined): Promise<ListPage> {
 		const params = new URLSearchParams({ count: "50" });
 		if (maxId) params.set("max_id", maxId);
@@ -104,7 +125,7 @@ export class InstagramClient {
 				if (backoff === undefined) {
 					throw new ScrapeError(
 						"RATE_LIMITED",
-						"Instagram is rate-limiting this account. Wait at least an hour before scraping again.",
+						`Instagram kept rate-limiting ${path.split("?")[0]}. Wait at least an hour before scraping again.`,
 					);
 				}
 				this.options.onWait?.("rate limited", backoff);

@@ -96,6 +96,16 @@ describe("InstagramClient", () => {
 		});
 	});
 
+	it("maps the user info response for the logged-in account", async () => {
+		const { client } = clientReturning(
+			json(200, { user: { pk: 123, username: "user1", follower_count: 300, following_count: 110 } }),
+		);
+
+		const profile = await client.getUserInfo("123");
+
+		expect(profile).toMatchObject({ id: "123", username: "user1", followerCount: 300, followingCount: 110 });
+	});
+
 	it("waits between requests but not before the first", async () => {
 		const { client, waits } = clientReturning(json(200, { users: [] }), json(200, { users: [] }));
 
