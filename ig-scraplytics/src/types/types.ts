@@ -24,3 +24,16 @@ export interface UserPostRelationship {
 	user: string;
 	numberOfPostsLiked: number;
 }
+
+export type ScrapePhase = "starting" | "waiting_for_login" | "profile" | "followers" | "following";
+
+export interface ScrapeJob {
+	id: string;
+	username: string;
+	status: "running" | "done" | "error";
+	progress: { phase: ScrapePhase; fetched: number; total: number; message?: string };
+	summary?: { username: string; followers?: number; following?: number };
+	error?: { code: string; message: string };
+	startedAt: string;
+	finishedAt?: string;
+}

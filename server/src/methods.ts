@@ -4,11 +4,7 @@ import { fileURLToPath } from "url";
 
 import { QueryResponse, UserPostRelationship } from "./types";
 import { queryDirectoryFolders, queryTextFile } from "./queries";
-
-const instagramUsersFolder = "../../db";
-const followersTxt = "followers.txt";
-const followingTxt = "following.txt";
-const postLikesTxt = "postLikes.txt";
+import { instagramUsersFolder, followersTxt, followingTxt, postLikesTxt } from "./db";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

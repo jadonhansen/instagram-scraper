@@ -9,6 +9,7 @@ See `.cursor/README.md` for full architecture details. In short:
 
 - Monorepo with `ig-scraplytics/` (React + Vite), `server/` (Express), and `db/` (flat-file per-user text files).
 - Frontend talks to the server over `fetch`; server reads/writes `db/<username>/{followers,following,postLikes}.txt`.
+- The scraper lives in `server/src/scraper/` and drives the installed Chrome via `playwright-core`; `server/.ig-session/` holds Instagram cookies and must never be committed.
 - Both packages are ESM TypeScript with `strict: true`.
 
 # Formatting (non-negotiable)

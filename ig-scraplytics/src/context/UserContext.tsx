@@ -5,7 +5,10 @@ interface UserContext {
 	selectedUser: string | undefined;
 	users: string[] | undefined;
 	serverError: Error | undefined;
+	// bumped after a scrape rewrites the selected user's files, so panels refetch
+	dataVersion: number;
 	addUser(user: string): void;
+	refreshData(): void;
 	setSelectedUser(user: string): void;
 }
 
@@ -13,7 +16,9 @@ const context: UserContext = {
 	selectedUser: undefined,
 	users: undefined,
 	serverError: undefined,
+	dataVersion: 0,
 	addUser: () => {},
+	refreshData: () => {},
 	setSelectedUser: () => {},
 };
 
@@ -31,6 +36,7 @@ export function UserProvider({ children }: Props) {
 	const [selectedUser, setSelectedUser] = useState<string | undefined>();
 	const [users, setUsers] = useState<string[] | undefined>();
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
+	const [dataVersion, setDataVersion] = useState(0);
 
 	useEffect(() => {
 		getUsers();
@@ -54,6 +60,11 @@ export function UserProvider({ children }: Props) {
 		temp.push(user);
 
 		setUsers(temp);
+		setServerError(undefined);
+	}
+
+	function refreshData() {
+		setDataVersion((version) => version + 1);
 	}
 
 	return (
@@ -62,7 +73,9 @@ export function UserProvider({ children }: Props) {
 				selectedUser: selectedUser,
 				users: users,
 				serverError: serverError,
+				dataVersion: dataVersion,
 				addUser: addUser,
+				refreshData: refreshData,
 				setSelectedUser: setSelectedUser,
 			}}
 		>

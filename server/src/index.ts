@@ -8,9 +8,11 @@ import {
 	getInstagramUsers,
 	addInstagramUser,
 } from "./methods";
+import { ScrapeJobManager } from "./scraper/jobs";
 
 const app = express();
 const port = 3000;
+const scrapeJobs = new ScrapeJobManager();
 
 // For parsing application/json
 app.use(express.json());
@@ -116,6 +118,31 @@ app.post("/instagram_users/add", async (req, res) => {
 	if (!user) return res.status(500).send("Undefined user in request body.");
 
 	const { data, error } = await addInstagramUser(user);
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
+
+	if (error) res.status(error.status).send(error.message);
+	else res.end(JSON.stringify(data));
+});
+
+app.post("/scrape", async (req, res) => {
+	const user = req.body.user;
+	if (!user) return res.status(500).send("Undefined user in request body.");
+
+	const { data, error } = scrapeJobs.start(user);
+
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
+	res.setHeader("Content-Type", "application/json");
+
+	if (error) res.status(error.status).send(error.message);
+	else res.end(JSON.stringify(data));
+});
+
+app.get("/scrape/:id", async (req, res) => {
+	const { data, error } = scrapeJobs.get(req.params.id);
 
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");

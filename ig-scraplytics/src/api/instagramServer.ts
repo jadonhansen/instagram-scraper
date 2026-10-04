@@ -1,4 +1,4 @@
-import { ApiResponse, UserPostRelationship } from "../types/types";
+import { ApiResponse, ScrapeJob, UserPostRelationship } from "../types/types";
 
 const baseUrl = "http://localhost:3000";
 const isDebug = false;
@@ -130,6 +130,38 @@ export async function getFollowing(user: string): Promise<ApiResponse<string[], 
 	} else {
 		if (isDebug) console.error("getFollowing()", res);
 		const error = new Error(res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function startScrape(user: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape`, {
+		...postFetchOptions,
+		body: JSON.stringify({ user: user }),
+	});
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("startScrape()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("startScrape()", res);
+		// the server explains why it refused (invalid username, scrape already running) in the body
+		const error = new Error((await res.text()) || res.statusText);
+		return { data: undefined, error };
+	}
+}
+
+export async function getScrapeJob(id: string): Promise<ApiResponse<ScrapeJob, Error>> {
+	const res = await fetch(`${baseUrl}/scrape/${encodeURIComponent(id)}`, getFetchOptions);
+
+	if (res.ok) {
+		const data = await res.json();
+		if (isDebug) console.log("getScrapeJob()", data);
+		return { data, error: undefined };
+	} else {
+		if (isDebug) console.error("getScrapeJob()", res);
+		const error = new Error((await res.text()) || res.statusText);
 		return { data: undefined, error };
 	}
 }

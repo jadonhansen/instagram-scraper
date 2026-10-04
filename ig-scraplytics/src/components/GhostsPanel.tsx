@@ -6,7 +6,7 @@ import SearchFeature from "./SearchFeature";
 interface Props {}
 
 const GhostsPanel: FunctionComponent<Props> = () => {
-	const { selectedUser } = useUserManager();
+	const { selectedUser, dataVersion } = useUserManager();
 
 	const [dataList, setDataList] = useState<string[] | undefined>(undefined);
 	const [serverError, setServerError] = useState<Error | undefined>(undefined);
@@ -15,7 +15,7 @@ const GhostsPanel: FunctionComponent<Props> = () => {
 	useEffect(() => {
 		setServerError(undefined);
 		getData(selectedUser);
-	}, [selectedUser]);
+	}, [selectedUser, dataVersion]);
 
 	const getData = async (user: string | undefined) => {
 		if (!user) return;

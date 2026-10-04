@@ -1,0 +1,28 @@
+export type ScrapeErrorCode =
+	| "INVALID_USERNAME"
+	| "LOGIN_REQUIRED"
+	| "LOGIN_TIMEOUT"
+	| "RATE_LIMITED"
+	| "USER_NOT_FOUND"
+	| "LIST_NOT_VISIBLE"
+	| "UNEXPECTED_RESPONSE"
+	| "BROWSER_CLOSED";
+
+export class ScrapeError extends Error {
+	readonly code: ScrapeErrorCode;
+
+	constructor(code: ScrapeErrorCode, message: string) {
+		super(message);
+		this.name = "ScrapeError";
+		this.code = code;
+	}
+}
+
+// Instagram usernames are 1-30 chars of letters, digits, "." and "_". This also keeps the db folder path safe.
+const usernamePattern = /^[A-Za-z0-9._]{1,30}$/;
+
+export function assertValidUsername(username: string): void {
+	if (!usernamePattern.test(username) || username === "." || username === "..") {
+		throw new ScrapeError("INVALID_USERNAME", `"${username}" is not a valid Instagram username.`);
+	}
+}

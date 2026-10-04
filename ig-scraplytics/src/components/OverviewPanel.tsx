@@ -10,7 +10,7 @@ const isDebug = true;
 interface Props {}
 
 const OverviewPanel: FunctionComponent<Props> = () => {
-	const { selectedUser } = useUserManager();
+	const { selectedUser, dataVersion } = useUserManager();
 
 	const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ const OverviewPanel: FunctionComponent<Props> = () => {
 		setFollowersServerError(undefined);
 		setFollowingServerError(undefined);
 		getData(selectedUser);
-	}, [selectedUser]);
+	}, [selectedUser, dataVersion]);
 
 	const getData = async (user: string | undefined) => {
 		if (!user) return;

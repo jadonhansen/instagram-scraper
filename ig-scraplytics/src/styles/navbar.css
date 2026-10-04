@@ -19,6 +19,8 @@ header {
 	}
 
 	.links {
+		display: flex;
+
 		h4 {
 			display: flex;
 			align-items: center;

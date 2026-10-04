@@ -7,7 +7,7 @@ A personal analytics tool that scrapes an Instagram account's followers, followi
 ```
 instagram-scraper/
 ├── ig-scraplytics/   # React 18 + Vite + TypeScript frontend (port 5173)
-├── server/           # Node.js + Express + TypeScript backend (port 3000)
+├── server/           # Node.js + Express + TypeScript backend (port 3000), includes the scraper
 └── db/               # Flat-file "database" — one folder per IG user
     └── <username>/
         ├── followers.txt   # newline-separated usernames
@@ -18,8 +18,10 @@ instagram-scraper/
 ## Architecture
 
 - **Frontend** (`ig-scraplytics`) calls the backend via `fetch` from `src/api/instagramServer.ts`. Uses React Context (`src/context/UserContext.tsx`) for selected-user state. Component structure: `NavBar`, `OverviewPanel`, `FansPanel`, `GhostsPanel`, `UnfollowersPanel`, modals.
-- **Backend** (`server`) is a thin Express API over the flat-file DB. Routes live in `src/index.ts`, business logic in `src/methods.ts`, file/dir IO in `src/queries.ts`, shared types in `src/types.ts`. All responses use the `QueryResponse<T>` discriminated union (`{ data, error }`).
-- **DB folder** (`db/`) is read from the server at runtime using `path.join(__dirname, "../../db")`. New users are created by making a new subfolder.
+- **Backend** (`server`) is a thin Express API over the flat-file DB. Routes live in `src/index.ts`, business logic in `src/methods.ts`, file/dir IO in `src/queries.ts`, shared types in `src/types.ts`, db paths and file names in `src/db.ts`. All responses use the `QueryResponse<T>` discriminated union (`{ data, error }`).
+- **Scraper** (`server/src/scraper/`) drives the installed Google Chrome through `playwright-core` with a persistent profile in `server/.ig-session/` (gitignored, holds session cookies). The first run opens Chrome on the Instagram login page and waits for a manual login. It pages through the Instagram web app's `friendships/<id>/followers` and `following` JSON endpoints from inside the page, 2 to 5 seconds apart, with backoff on rate limits. It writes `followers.txt` and `following.txt` atomically (temp file plus rename, no trailing newline) and creates an empty `postLikes.txt` if missing. Post likes are not scraped yet.
+- **Scrape jobs**: `POST /scrape { user }` starts a background job and returns it, `GET /scrape/:id` returns its progress. Only one job runs at a time (409 otherwise). The UI's Scrape modal (`ScrapeModal.tsx`) polls the job and bumps `dataVersion` in `UserContext` so panels refetch.
+- **DB folder** (`db/`) is read from the server at runtime using `path.join(__dirname, "../../db")`. New users are created by making a new subfolder or by scraping them.
 
 ## Core Domain Concepts
 
@@ -33,8 +35,8 @@ instagram-scraper/
 | Area | Stack |
 |---|---|
 | Frontend | React 18, Vite 5, TypeScript 5, react-icons, plain CSS |
-| Backend | Node.js (ESM), Express 4, fs-extra, TypeScript 5 |
-| Tooling | ESLint (`@typescript-eslint`), Prettier, nodemon, tsx |
+| Backend | Node.js (ESM), Express 4, fs-extra, playwright-core (drives installed Chrome), TypeScript 5 |
+| Tooling | ESLint (`@typescript-eslint`), Prettier, nodemon, tsx, Vitest (server) |
 | Runtime | NPM, Node |
 
 ## Conventions
@@ -57,11 +59,11 @@ cd ig-scraplytics && npm run lint      # eslint
 cd server && npm run dev               # nodemon + tsx
 cd server && npm run build             # tsc
 cd server && npm start                 # node dist/index.js
+cd server && npm test                  # vitest
+cd server && npm run scrape -- <username> [--only followers|following] [--headless]
 ```
 
 ## Known Gaps / Roadmap
 
 - Implement Turborepo.
-- Implement the actual scraper as an Express service that writes to `db/<user>/`.
-- Add a "scrape" modal in the UI (username + post count) that triggers the scraper and reloads app data on completion.
-- Persist last-used username + post count to `localStorage`.
+- Scrape post likes (last N posts and their likers) into `postLikes.txt`, with N as a Scrape modal field persisted to `localStorage`.
